@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { LoginService } from '../../Services/login.service';
+import { AuthService } from '../../Services/auth.service';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '@coreui/angular';
 import { throwError } from 'rxjs';
@@ -12,7 +12,7 @@ import { throwError } from 'rxjs';
   styleUrl: './logout.component.scss'
 })
 export class LogoutComponent implements OnInit {
-  loginService = inject(LoginService)
+  AuthService = inject(AuthService)
   router = inject(Router)
   localStorageService = inject(LocalStorageService)
 
@@ -25,7 +25,7 @@ export class LogoutComponent implements OnInit {
       return;
     }
 
-    this.loginService.logoutUser({ refreshToken }).subscribe({
+    this.AuthService.logoutUser({ refreshToken }).subscribe({
       next: (res) => {
         this.localStorageService.removeItem("token");
         this.localStorageService.removeItem("refreshToken");

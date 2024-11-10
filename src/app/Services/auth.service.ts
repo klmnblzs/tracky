@@ -2,11 +2,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, tap, throwError } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LoginService {
+export class AuthService {
   private httpClient = inject(HttpClient)
   private router = inject(Router)
 
@@ -25,6 +26,13 @@ export class LoginService {
       "http://localhost:3000/auth/login",
       formData,
       "Error while logging in"
+    )
+  }
+  registerUser(formData:Object) {
+    return this.post(
+      "http://localhost:3000/auth/register",
+      formData,
+      "Error while registering"
     )
   }
 
@@ -50,5 +58,23 @@ export class LoginService {
       body,
       "Error while logging out"
     )
+  }
+
+  getUserDataFromToken() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decodedToken = jwtDecode<any>(token);
+      return decodedToken;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  checkUsername(username: string) {
+    return this.httpClient.post('http://localhost:3000/auth/check-duplicate', { username });
   }
 }

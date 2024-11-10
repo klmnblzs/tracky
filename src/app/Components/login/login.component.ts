@@ -1,18 +1,18 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { LoginService } from '../../Services/login.service';
+import { AuthService } from '../../Services/auth.service';
 import { LocalStorageService } from '@coreui/angular';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
-  loginService = inject(LoginService)
+  AuthService = inject(AuthService)
   localStorageService = inject(LocalStorageService)
   destroyRef = inject(DestroyRef)
   router = inject(Router)
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
   
   onLogin() {
     if(this.loginForm.valid) {
-      const subscription = this.loginService.loginUser({
+      const subscription = this.AuthService.loginUser({
         username: this.loginForm.value.username,
         password: this.loginForm.value.password,
       }).subscribe({

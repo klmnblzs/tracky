@@ -5,6 +5,7 @@ import { CategoryService } from '../../Services/category.service';
 import { CategoriesComponent } from "./categories/categories.component";
 import { NavbarComponent } from "../navbar/navbar.component";
 import { Router } from '@angular/router';
+import { AuthService } from '../../Services/auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -15,12 +16,17 @@ import { Router } from '@angular/router';
 })
 export class LandingComponent implements OnInit {
   private router = inject(Router)
+  private AuthService = inject(AuthService)
+
+  username:string="";
+
   ngOnInit(): void {
     const token = localStorage.getItem("token")
-
     if(!token) {
       this.router.navigate(["/login"])
     }
+    const userData = this.AuthService.getUserDataFromToken()
+    this.username=userData.username
   }
 
   logOut() {

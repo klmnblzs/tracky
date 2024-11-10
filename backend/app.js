@@ -2,6 +2,7 @@ const express = require('express')
 const mysql = require('mysql2/promise')
 const dotenv = require('dotenv')
 const cors = require('cors')
+const bcrypt=require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const app = express()
@@ -45,12 +46,12 @@ function authenticateToken(req, res, next) {
 
     if (token == null) { return res.status(401).json({ message: "Token: null" }); }
 
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, serialized_value) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
             return res.status(403).json({ message: "Token: Invalid" });
         }
-
-        req.user = serialized_value;
+        console.log(decoded)
+        req.user = decoded;
         next();
     });
 }
@@ -90,14 +91,73 @@ app.post('/auth/login', async (req, res) => {
     if(!password) return res.status(400).json({ message: "Jelszó megadása kötelező!" })
 
     try {
-        const [results] = await pool.query('CALL Login(?, ?)', [ username, password ])
-        if(results[0].length == 0) {
-            res.status(401).json({ error: "Rossz jelszó!"})
-        } else {
-            const user = results[0][0]; 
-            const accessToken = generateAccessToken(req.body)
-            const refreshToken = await generateRefreshToken(user.id)
-            res.status(200).json({ token: accessToken, refreshToken: refreshToken })
+        const [hashedPassword] = await pool.query("SELECT password FROM users WHERE username = ?", [username])
+        console.log(hashedPassword)
+        const validPassword = hashedPassword[0].password.trim()
+        const isPasswordValid = await bcrypt.compare(password, validPassword)
+        
+        if(isPasswordValid) {
+            const [results] = await pool.query('CALL Login(?, ?)', [ username, validPassword ])
+            if(results[0].length == 0) {
+                res.status(401).json({ error: "Rossz jelszó!"})
+            } else {
+                const user = results[0][0]; 
+                const accessToken = generateAccessToken(req.body)
+                const refreshToken = await generateRefreshToken(user.id)
+                res.status(200).json({ token: accessToken, refreshToken: refreshToken })
+            }
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ error: "Internal server error" })
+    }
+})
+
+app.post('/auth/check-duplicate', async (req, res) => {
+    const { username } = req.body;
+
+    if (!username) {
+        return res.status(400).json({ message: "Username is required" });
+    }
+
+    try {
+        const [rows] = await pool.execute('SELECT * FROM users WHERE username = ?', [username]);
+        
+        if (rows.length > 0) {
+            return res.status(400).json({ message: "Username is already taken" });
+        }
+
+        return res.status(200).json({ message: "Username is available" });
+
+    } catch (error) {
+        console.error("Error checking username:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post('/auth/register', async (req, res) => {
+    const { username, password } = req.body;
+
+    if(!username) return res.status(400).json({ message: "Felhasználónév megadása kötelező!" })
+    if(!password) return res.status(400).json({ message: "Jelszó megadása kötelező!" })
+    
+    try {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        try {
+            const [results] = await pool.query('CALL Register(?, ?)', [ username, hashedPassword ])
+
+            if(results.affectedRows > 0) {
+                return res.status(201).json({ message: "Sikeres regisztráció!" })
+            } else {
+                console.log(results)
+                return res.status(500).json({ error: "Sikertelen regisztráció" })
+            }
+            
+        } catch(err) {
+            console.log(err)
+        res.status(500).json({ error: "Internal server error" })
         }
 
     } catch (err) {

@@ -1,16 +1,17 @@
 <div class="container">
     <div class="formContainer">
-        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-            <h1>Bejelentkezés</h1>
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+            <h1>Regisztráció</h1>
             <label for="username">Felhasználónév</label>
             <input type="text" id="username" name="username" formControlName="username">
             <label for="password">Jelszó</label>
             <input type="password" id="password" name="password" formControlName="password">
-            @if(loginError) {
-                <p class="error">Hiba a bejelentkezés során!</p>
+            @if(registerError) {
+                <p class="error">{{ errorText }}</p>
             }
-            <input type="submit" value="Bejelentkezés">
+            <input type="submit" value="Regisztráció">
         </form>
-        <p>Még nincs fiókod? <a routerLink="/register">Regisztrálj!</a></p>
+        <p>Már van fiókod? <a routerLink="/login">Jelentkezz be!</a></p>
+
     </div>
 </div>
