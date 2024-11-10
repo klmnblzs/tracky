@@ -44,10 +44,10 @@ export class LoginService {
     );
   }
 
-  logoutUser(formData:Object) {
+  logoutUser(body:Object) {
     return this.logOutManager(
       "http://localhost:3000/auth/logout",
-      formData,
+      body,
       "Error while logging out"
     )
   }

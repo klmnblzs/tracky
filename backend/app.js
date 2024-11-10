@@ -138,10 +138,29 @@ app.post('/auth/refresh', async (req, res) => {
 
 app.post('/auth/logout', async (req, res) => {
     const { refreshToken } = req.body;
-    if (refreshToken) {
-        await pool.execute('DELETE FROM refresh_tokens WHERE token = ?', [refreshToken]);
+
+    if (!refreshToken) {
+        return res.status(400).json({ message: "Nincs megadva refresh token" });
     }
-    res.status(200).json({ message: "Sikeres kijelentkezés" });
+
+    try {
+        const [rows] = await pool.execute('SELECT * FROM refresh_tokens WHERE token = ?', [refreshToken.replace(/"/g, "")]);
+  
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "A refresh token nem található az adatbázisban" });
+        }
+
+        const [result] = await pool.execute('DELETE FROM refresh_tokens WHERE token = ?', [refreshToken.replace(/"/g, "")]);
+
+        if (result.affectedRows > 0) {
+            return res.status(200).json({ message: "Sikeres kijelentkezés" });
+        } else {
+            return res.status(500).json({ message: "A token törlése nem sikerült" });
+        }
+
+    } catch (err) {
+        return res.status(500).json({ message: "Hiba történt a kijelentkezés során" });
+    }
 });
 
 app.get('/expenses', async (req, res) => {

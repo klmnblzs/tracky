@@ -22,4 +22,8 @@ export class LandingComponent implements OnInit {
       this.router.navigate(["/login"])
     }
   }
+
+  logOut() {
+    this.router.navigate(["/logout"])
+  }
 } 

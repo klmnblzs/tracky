@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { LoginService } from '../../Services/login.service';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '@coreui/angular';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-logout',
@@ -16,30 +17,26 @@ export class LogoutComponent implements OnInit {
   localStorageService = inject(LocalStorageService)
 
   ngOnInit(): void {
-    if(!localStorage.getItem("refreshToken")) {
-      if(localStorage.getItem("token")){
-          this.localStorageService.removeItem("token")
-      }
-      this.router.navigate(["/login"])
-    }
+    const refreshToken = localStorage.getItem("refreshToken");
 
-    if(!localStorage.getItem("token")) {
-      if(localStorage.getItem("refreshToken")){
-          this.localStorageService.removeItem("refreshToken")
-      }
-      this.router.navigate(["/login"])
+    if (!refreshToken) {
+      console.log("Nincs refresh token");
+      this.router.navigate(["/login"]);
+      return;
     }
     
-    const subscription = this.loginService.logoutUser({ refreshToken: localStorage.getItem("refreshToken") }).subscribe({
+    this.loginService.logoutUser({ refreshToken }).subscribe({
       next: (res) => {
-        if(localStorage.getItem("token")){
-          this.localStorageService.removeItem("token")
-        }
-        if(localStorage.getItem("refreshToken")){
-          this.localStorageService.removeItem("refreshToken")
-        }
-        this.router.navigate(["/login"])
+        console.log("Kijelentkezve:", res);
+
+        this.localStorageService.removeItem("token");
+        this.localStorageService.removeItem("refreshToken");
+
+        this.router.navigate(["/login"]);
+      },
+      error: (err) => {
+        console.error("Hiba a kijelentkezés során:", err);
       }
-    })
+    });
   }
 }
