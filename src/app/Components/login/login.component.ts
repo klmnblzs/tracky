@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LoginService } from '../../Services/login.service';
 import { LocalStorageService } from '@coreui/angular';
@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginService = inject(LoginService)
   localStorageService = inject(LocalStorageService)
   destroyRef = inject(DestroyRef)
@@ -23,6 +23,12 @@ export class LoginComponent {
   })
 
   loginError=false;
+
+  ngOnInit(): void {
+    if(localStorage.getItem("token") && localStorage.getItem("refreshToken")) {
+      this.router.navigate(["/landing"])
+    }
+  }
   
   onLogin() {
     if(this.loginForm.valid) {

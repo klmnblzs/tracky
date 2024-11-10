@@ -6,7 +6,7 @@ import { LoginComponent } from './Components/login/login.component';
 import { LogoutComponent } from './Components/logout/logout.component';
 
 export const routes: Routes = [
-    { path: '', component: LandingComponent},
+    { path: '', component: LoginComponent},
     { path: 'dashboard', component: LandingComponent },
     { path: 'dashboard/:month', component: DashboardComponent },
 
