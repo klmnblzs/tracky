@@ -6,11 +6,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CategoryService } from '../../Services/category.service';
 import { SalaryService } from '../../Services/salary.service';
+import { NavbarComponent } from "../navbar/navbar.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ModalModule, DecimalPipe, ReactiveFormsModule],
+  imports: [ModalModule, DecimalPipe, ReactiveFormsModule, NavbarComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -56,6 +57,7 @@ export class DashboardComponent implements OnInit {
 
   private destroyRef = inject(DestroyRef);
   private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
   
   month:string = "";
   categories:any = null;
@@ -68,8 +70,10 @@ export class DashboardComponent implements OnInit {
 
   loadExpenses() {
     const subscription = this.expensesService.getExpensesByMonth(this.month).subscribe({
-      next: (res) => {
-        this.expenses=res
+      next: (res:any) => {
+        if(res.status !== 500){
+          this.expenses=res
+        }
       }
     })
 
@@ -92,6 +96,12 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const token = localStorage.getItem("token")
+
+    if(!token) {
+      this.router.navigate(["/login"])
+    }
+
     const subscription = this.categoryService.getCategories().subscribe({
       next: (res) => {
         this.categories=res
@@ -264,11 +274,6 @@ export class DashboardComponent implements OnInit {
   }
 
   onAddSalary() {
-    if(this.editSalaryForm.invalid) {
-      this.submitErr = true;
-      return
-    }
-
     const subscription = this.salaryService.addSalary(
       {
         amount: this.editSalaryForm.value.amount,
@@ -281,11 +286,9 @@ export class DashboardComponent implements OnInit {
         this.loadExpenses()
         this.hideSalaryDialog()
         this.submitErr = false;
-      },
-      error: (err) => {
-        this.submitErr = true;
       }
     })
+    this.destroyRef.onDestroy(() => subscription.unsubscribe())
   }
 
   openSalaryEditDialog() {

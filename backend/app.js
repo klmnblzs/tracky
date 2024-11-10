@@ -2,7 +2,7 @@ const express = require('express')
 const mysql = require('mysql2/promise')
 const dotenv = require('dotenv')
 const cors = require('cors')
-const moment = require('moment')
+const jwt = require('jsonwebtoken')
 
 const app = express()
 
@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'id']
+    allowedHeaders: ['Content-Type', 'id', 'Authorization']
 }))
 
 dotenv.config()
@@ -29,6 +29,120 @@ const pool = mysql.createPool({
 app.get('/', (req, res) => {
     res.send("Welcome to the API!")
 })
+
+app.get('/validate', authenticateToken, (req, res) => {
+    res.json({message: "Valid token"})
+})
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    
+    if (!authHeader) {
+        return res.status(401).json({ message: "Authorization header missing" });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    if (token == null) { return res.status(401).json({ message: "Token: null" }); }
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, serialized_value) => {
+        if (err) {
+            return res.status(403).json({ message: "Token: Invalid" });
+        }
+
+        req.user = serialized_value;
+        next();
+    });
+}
+
+function generateAccessToken(data) {
+    return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
+}
+
+async function generateRefreshToken(userId) {
+    if (!userId) {
+        res.status(500).json({ error: "UserID megadása kötelező!" })
+    }
+
+    const refreshToken = jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+
+    if (!refreshToken) {
+        res.status(500).json({ error: "Refresh token generálása sikertelen volt!" })
+    }
+
+    try {
+        const [result] = await pool.execute(
+            'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
+            [userId, refreshToken, new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)]
+        );
+
+        return refreshToken;
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Refresh token adatbázisba rögzítése során probléma lépett fel!" })
+    }
+}
+
+app.post('/auth/login', async (req, res) => {
+    const { username, password } = req.body
+
+    if(!username) return res.status(400).json({ message: "Felhasználónév megadása kötelező!" })
+    if(!password) return res.status(400).json({ message: "Jelszó megadása kötelező!" })
+
+    try {
+        const [results] = await pool.query('CALL Login(?, ?)', [ username, password ])
+        if(results[0].length == 0) {
+            res.status(401).json({ error: "Rossz jelszó!"})
+        } else {
+            const user = results[0][0]; 
+            const accessToken = generateAccessToken(req.body)
+            const refreshToken = await generateRefreshToken(user.id)
+            res.status(200).json({ token: accessToken, refreshToken: refreshToken })
+        }
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ error: "Internal server error" })
+    }
+})
+
+app.post('/auth/refresh', async (req, res) => {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+        return res.status(400).json({ message: "Adj meg egy refresh tokent" });
+    }
+
+    try {
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, user) => {
+            if (err) return res.status(403).json({ message: "Érvénytelen refresh token" });
+
+            const [rows] = await pool.execute('SELECT * FROM refresh_tokens WHERE token = ?', [refreshToken]);
+
+            if (rows.length === 0) {
+                return res.status(403).json({ message: "Érvénytelen refresh token" });
+            }
+
+            await pool.execute('DELETE FROM refresh_tokens WHERE token = ?', [refreshToken]);
+
+            const newRefreshToken = await generateRefreshToken(user.userId);
+            const newAccessToken = generateAccessToken({ id: user.userId }); 
+
+            res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post('/auth/logout', async (req, res) => {
+    const { refreshToken } = req.body;
+    if (refreshToken) {
+        await pool.execute('DELETE FROM refresh_tokens WHERE token = ?', [refreshToken]);
+    }
+    res.status(200).json({ message: "Sikeres kijelentkezés" });
+});
 
 app.get('/expenses', async (req, res) => {
     try {
@@ -76,7 +190,7 @@ app.get('/expenses/month/sum/:month', async (req, res) => {
     }
 })
 
-app.post('/expenses/new', async (req, res) => {
+app.post('/expenses/new', authenticateToken, async (req, res) => {
     const {
         month,
         category,
@@ -109,7 +223,7 @@ app.post('/expenses/new', async (req, res) => {
     }
 })
 
-app.post('/expenses/delete', async (req, res) => {
+app.post('/expenses/delete', authenticateToken, async (req, res) => {
     const {
         id
     } = req.body
@@ -131,7 +245,7 @@ app.post('/expenses/delete', async (req, res) => {
     }
 })
 
-app.post('/expenses/edit', async (req, res) => {
+app.post('/expenses/edit', authenticateToken, async (req, res) => {
     const {
         id,
         category,
@@ -171,7 +285,7 @@ app.get('/categories', async (req, res) => {
     }
 })
 
-app.post('/categories/new', async (req, res) => {
+app.post('/categories/new', authenticateToken, async (req, res) => {
     const {
         category
     } = req.body
@@ -194,7 +308,7 @@ app.post('/categories/new', async (req, res) => {
     }
 })
 
-app.post('/categories/delete', async (req, res) => {
+app.post('/categories/delete', authenticateToken, async (req, res) => {
     const {
         category
     } = req.body
@@ -219,7 +333,7 @@ app.post('/categories/delete', async (req, res) => {
 
 // FIZETÉS
 
-app.post('/salary/new', async (req, res) => {
+app.post('/salary/new', authenticateToken, async (req, res) => {
     const {
         amount,
         month
@@ -244,7 +358,7 @@ app.post('/salary/new', async (req, res) => {
     }
 })
 
-app.post('/salary/edit', async (req, res) => {
+app.post('/salary/edit', authenticateToken, async (req, res) => {
     const {
         amount,
         month
@@ -280,12 +394,6 @@ app.get('/salary/get/:month', async (req, res) => {
         res.status(500).json({ message: "Internal server error" })
     }
 })
-
-// SAVING CALCULATOR
-
-app.get('/savings/get'), async (req, res) => {
-    
-}
 
 app.listen(3000, (req, res) => {
     console.log("Listening on port: 3000")

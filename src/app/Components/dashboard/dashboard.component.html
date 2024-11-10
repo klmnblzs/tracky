@@ -1,3 +1,5 @@
+<app-navbar />
+
 <dialog id="addExpenseDialog">
   <div class="panel">
     <div id="title-container">
@@ -47,9 +49,7 @@
         <label for="description">Mire? <span class="required">*</span></label>
         <input type="text" id="description" name="description" formControlName="description" [class.invalid]="this.editExpenseForm.controls.description.invalid && this.editExpenseForm.controls.description.touched">
       </form>
-      @if(this.submitErr == true) {
-        <p class="error">Hiba a szerkesztés közben!</p>
-      }
+      
     </div>
     <div>
       <button (click)="deleteExpense()" id="deleteBtn">Törlés</button>
@@ -70,9 +70,6 @@
       <form [formGroup]="editSalaryForm" (ngSubmit)="onEditSalary()" >
         <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.editSalaryForm.controls.amount.invalid && this.editSalaryForm.controls.amount.touched">
       </form>
-      @if(this.submitErr == true) {
-        <p class="error">Hiba a szerkesztés közben!</p>
-      }
     </div>
     <div>
       <button (click)="hideSalaryDialog()" id="nvmBtn">Mégse</button>

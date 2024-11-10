@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "sauth": "nodemon authServer.js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1"
   }
 }

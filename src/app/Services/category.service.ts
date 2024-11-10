@@ -1,35 +1,19 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { Router } from '@angular/router';
+import { catchError, switchMap, tap, throwError } from 'rxjs';
+import { RequestsService } from './requests.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
-  httpClient = inject(HttpClient);
-
-  private fetch(url:string, errorMessage:string) {
-    return this.httpClient.get(url)
-    .pipe(
-      catchError((err) => throwError(() => {
-        console.log(err)
-        new Error(errorMessage)
-      }))
-    )
-  }
-
-  private post(url:string, body:Object, errorMessage:string) {
-    return this.httpClient.post(url, body)
-    .pipe(
-      catchError((err) => throwError(() => {
-        console.log(err)
-        new Error(errorMessage)
-      }))
-    )
-  }
+  private httpClient = inject(HttpClient);
+  private router = inject(Router);
+  private requestsManager = inject(RequestsService)
 
   addNewCategory(formData:Object) {
-    return this.post(
+    return this.requestsManager.post(
       "http://localhost:3000/categories/new",
       formData,
       "Error while adding new user"
@@ -37,7 +21,7 @@ export class CategoryService {
   }
 
   deleteCategory(formData:Object) {
-    return this.post(
+    return this.requestsManager.post(
       "http://localhost:3000/categories/delete",
       formData,
       "Error while adding new user"
@@ -45,7 +29,7 @@ export class CategoryService {
   }
 
   getCategories() {
-    return this.fetch(
+    return this.requestsManager.fetch(
       "http://localhost:3000/categories",
       "Error fetching categories"
     )

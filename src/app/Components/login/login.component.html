@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="formContainer">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            <h1>Bejelentkezés</h1>
+            <label for="username">Felhasználónév</label>
+            <input type="text" id="username" name="username" formControlName="username">
+            <label for="password">Jelszó</label>
+            <input type="password" id="password" name="password" formControlName="password">
+            @if(loginError) {
+                <p class="error">Hiba a bejelentkezés során!</p>
+            }
+            <input type="submit" value="Bejelentkezés">
+        </form>
+    </div>
+</div>
