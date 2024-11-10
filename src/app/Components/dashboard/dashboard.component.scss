@@ -1,3 +1,10 @@
+$background: #180161;
+$accent: #4F1787;
+$btn-base: #EB3678;
+$btn-edit:#FB773C;
+$btn-success: #3feb36;
+$btn-nvm: #8a8a8a;
+
 .container {
     color: white;
 
@@ -45,7 +52,7 @@
         
 
         .expense {
-            border: 2px solid #4F1787;
+            border: 2px solid $accent;
             padding: 15px;
             margin: 0 15px 0 15px;
             border-radius: 15px;
@@ -71,7 +78,7 @@
         }
 
         .expense:hover {
-            background-color: #4F1787;
+            background-color: $accent;
             padding: 17px;
         }
     }
@@ -90,7 +97,7 @@ dialog {
     align-items: center;
 
     .panel {
-        background-color: #180161;
+        background-color: $background;
         padding: 30px;
         border-radius: 15px;
         width: 350px;
@@ -120,8 +127,8 @@ dialog {
             width: 100%;
             padding: 5px;
             margin-bottom: 10px;
-            background-color: #180161;
-            border: 1px solid #4F1787;
+            background-color: $background;
+            border: 1px solid $accent;
             outline: none;
             color: white;
         }

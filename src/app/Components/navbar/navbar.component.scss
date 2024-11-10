@@ -1,9 +1,16 @@
+$background: #180161;
+$accent: #4F1787;
+$btn-base: #EB3678;
+$btn-edit:#FB773C;
+$btn-success: #3feb36;
+$btn-nvm: #8a8a8a;
+
 nav {
-    background-color: #180161;
+    background-color: $background;
     position: fixed;
     width: 10vw;
     height: 100vh;
-    border-right: 2px solid #4F1787;
+    border-right: 2px solid $accent;
     margin-right: 150px;
     overflow: auto;
 
@@ -28,7 +35,7 @@ nav {
         
         li {
             display: block;
-            background-color: #180161;
+            background-color: $background;
             padding: 15px;
             transition: .3s;
             a {
@@ -39,7 +46,7 @@ nav {
         }
 
         li:hover {
-            background-color: #4F1787;
+            background-color: $accent;
             cursor: pointer;
         }
     }

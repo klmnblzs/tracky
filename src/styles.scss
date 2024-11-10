@@ -1,3 +1,10 @@
+$background: #180161;
+$accent: #4F1787;
+$btn-base: #EB3678;
+$btn-edit:#FB773C;
+$btn-success: #3feb36;
+$btn-nvm: #8a8a8a;
+
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 * {
@@ -10,61 +17,61 @@
 }
 
 body {
-    background-color: #180161;
+    background-color: $background;
 }
 
 #deleteBtn {
-    border: 2px solid #EB3678;
-    color: #EB3678;
+    border: 2px solid $btn-base;
+    color: $btn-base;
     margin-right: 10px
 }
 
 #deleteBtn:hover {
-    background-color: #EB3678;
+    background-color: $btn-base;
     color: white;
     padding: 8px;
 }
 
 #nvmBtn {
-    border: 2px solid #8a8a8a;
-    color: #8a8a8a;
+    border: 2px solid $btn-nvm;
+    color: $btn-nvm;
     margin-right: 10px;
 }
 
 #nvmBtn:hover {
-    background-color: #8a8a8a;
+    background-color: $btn-nvm;
     color: white;
     padding: 8px;
 }
 
 #addBtn {
-    border: 2px solid #3feb36;
-    color: #3feb36;
+    border: 2px solid $btn-success;
+    color: $btn-success;
     margin-right: 10px;
 }
 
 #addBtn:hover {
-    background-color: #3feb36;
+    background-color: $btn-success;
     color: white;
     padding: 8px;
 }
 
 
 #editBtn {
-    border: 2px solid #FB773C;
-    color: #FB773C;
+    border: 2px solid $btn-edit;
+    color: $btn-edit;
     margin-right: 10px;
 }
 
 #editBtn:hover {
-    background-color: #FB773C;
+    background-color: $btn-edit;
     color: white;
     padding: 8px;
 }
 
 input[type='text'], input[type='number'], input[type='password'] {
-    background-color: #180161;
-    border: 1px solid #4F1787;
+    background-color: $background;
+    border: 1px solid $accent;
     border-radius: 5px;
     color: white;
     outline: none;
@@ -74,20 +81,20 @@ input[type='text'], input[type='number'], input[type='password'] {
 }
 
 input[type='text'].invalid, input[type='number'].invalid, input[type='password'].invalid {
-    border: 1px solid #EB3678;
+    border: 1px solid $btn-base;
 }
 
 input[type='text']:focus, input[type='number']:focus, input[type='password']:focus {
-    border: 1px solid #FB773C;
+    border: 1px solid $btn-edit;
 }
 
 
 button {
     padding: 7px;
     outline: none;
-    border: 2px solid #EB3678;
+    border: 2px solid $btn-base;
     background-color: rgba(0,0,0,0);
-    color: #EB3678;
+    color: $btn-base;
     border-radius: 30px;
     font-weight: bold;
     margin-top: 10px;
@@ -99,14 +106,14 @@ button {
 button:hover {
     padding: 8px;
     color: white;
-    background-color: #EB3678;
+    background-color: $btn-base;
 }
 
 .error {
-    color: #EB3678;
+    color: $btn-base;
     text-align: center;
 }
 
 .required {
-    color: #EB3678;
+    color: $btn-base;
 }

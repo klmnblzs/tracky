@@ -24,11 +24,9 @@ export class LogoutComponent implements OnInit {
       this.router.navigate(["/login"]);
       return;
     }
-    
+
     this.loginService.logoutUser({ refreshToken }).subscribe({
       next: (res) => {
-        console.log("Kijelentkezve:", res);
-
         this.localStorageService.removeItem("token");
         this.localStorageService.removeItem("refreshToken");
 

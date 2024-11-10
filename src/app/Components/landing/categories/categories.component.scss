@@ -1,7 +1,13 @@
+$background: #180161;
+$accent: #4F1787;
+$btn-base: #EB3678;
+$btn-edit:#FB773C;
+$btn-success: #3feb36;
+$btn-nvm: #8a8a8a;
 
 .category-container {
     margin-top: 50px;
-    border: 2px solid #4F1787;
+    border: 2px solid $accent;
     padding: 20px;
     border-radius: 15px;
     transition: .3s;
@@ -47,7 +53,7 @@ dialog {
     align-items: center;
 
     .panel {
-        background-color: #180161;
+        background-color: $background;
         padding: 30px;
         border-radius: 15px;
         width: 350px;
@@ -77,21 +83,10 @@ dialog {
             width: 100%;
             padding: 5px;
             margin-bottom: 10px;
-            background-color: #180161;
-            border: 1px solid #4F1787;
+            background-color: $background;
+            border: 1px solid $accent;
             outline: none;
             color: white;
-        }
-        
-        #nvmBtn {
-            border: 2px solid #8a8a8a;
-            color: #8a8a8a;
-        }
-        
-        #nvmBtn:hover {
-            background-color: #8a8a8a;
-            color: white;
-            padding: 8px;
         }
     }
 

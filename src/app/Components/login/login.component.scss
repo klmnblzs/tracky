@@ -1,3 +1,10 @@
+$background: #180161;
+$accent: #4F1787;
+$btn-base: #EB3678;
+$btn-edit:#FB773C;
+$btn-success: #3feb36;
+$btn-nvm: #8a8a8a;
+
 .container {
     height: 100vh;
     width: 100%;
@@ -14,7 +21,7 @@
 
         input[type='submit'] {
             width: 100%;
-            background-color: #EB3678;
+            background-color: $btn-base;
             border: none;
             outline: none;
             padding: 7px;
@@ -27,12 +34,12 @@
 
         input[type='submit']:hover {
             background-color: rgba(0,0,0,0);
-            color: #EB3678;
-            border: 2px solid #EB3678;
+            color: $btn-base;
+            border: 2px solid $btn-base;
             padding: 9px;
         }
 
-        border: 1px solid #4F1787;
+        border: 1px solid $accent;
         padding: 25px;
         border-radius: 15px;
     }
