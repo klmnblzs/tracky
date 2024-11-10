@@ -43,6 +43,8 @@ export class RegisterComponent {
             next: (res: any) => {
               setTimeout(() => {
                 this.router.navigate(["/login"]);
+                this.registerError = false
+                this.errorText=""
               });
             },
             error: (err) => {

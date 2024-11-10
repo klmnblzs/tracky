@@ -92,7 +92,6 @@ app.post('/auth/login', async (req, res) => {
 
     try {
         const [hashedPassword] = await pool.query("SELECT password FROM users WHERE username = ?", [username])
-        console.log(hashedPassword)
         const validPassword = hashedPassword[0].password.trim()
         const isPasswordValid = await bcrypt.compare(password, validPassword)
         
