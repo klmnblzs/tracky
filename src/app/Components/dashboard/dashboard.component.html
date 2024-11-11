@@ -10,6 +10,7 @@
       <form [formGroup]="addExpenseForm" (ngSubmit)="onAddExpense()">
         <label for="category">Kategória <span class="required">*</span></label>
         <select name="category" id="category" formControlName="category">
+          <option value="" disabled>Válassz kategóriát...</option>
           @for (category of categories; track $index) {
             <option [value]="category.category_name">{{ category.category_name }}</option>
           }
@@ -40,6 +41,7 @@
       <form [formGroup]="editExpenseForm" (ngSubmit)="onEditExpense()" >
         <label for="category">Kategória <span class="required">*</span></label>
         <select name="category" id="category" formControlName="category">
+          <option value="" disabled>Válassz kategóriát...</option>
           @for (category of categories; track $index) {
             <option [value]="category.category_name">{{ category.category_name }}</option>
           }
