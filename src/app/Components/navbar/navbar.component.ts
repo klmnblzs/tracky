@@ -15,6 +15,7 @@ interface DateObject {
 })
 export class NavbarComponent {
   months: string[] = ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"]
+  userId = localStorage.getItem("userId")
 
   removeEkezet(input: string): string {
     const ekezetek: { [key: string]: string } = {

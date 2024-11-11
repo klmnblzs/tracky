@@ -28,9 +28,9 @@ export class CategoryService {
     )
   }
 
-  getCategories() {
+  getCategories(userId:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/categories",
+      "http://localhost:3000/categories/" + userId,
       "Error fetching categories"
     )
   }

@@ -10,9 +10,9 @@ export class SalaryService {
   private httpClient = inject(HttpClient)
   private requestsManager = inject(RequestsService)
 
-  getSalaryByMonth(month:string) {
+  getSalaryByMonth(month:string, userId:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/salary/get/" + month,
+      "http://localhost:3000/salary/get/" + userId + "/" + month,
       "Error fetching salary"
     )
   }

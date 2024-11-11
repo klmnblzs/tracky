@@ -60,6 +60,7 @@ export class DashboardComponent implements OnInit {
   private router = inject(Router);
   
   month:string = "";
+  userid:string = "";
   categories:any = null;
   expenses:any = null;
   expenseSum:any = null;
@@ -69,7 +70,7 @@ export class DashboardComponent implements OnInit {
   submitErr=false
 
   loadExpenses() {
-    const subscription = this.expensesService.getExpensesByMonth(this.month).subscribe({
+    const subscription = this.expensesService.getExpensesByMonthAndId(this.month, localStorage.getItem("userId")!).subscribe({
       next: (res:any) => {
         if(res.status !== 500){
           this.expenses=res
@@ -77,7 +78,7 @@ export class DashboardComponent implements OnInit {
       }
     })
 
-    const calculateSum = this.expensesService.getMonthlySum(this.month).subscribe({
+    const calculateSum = this.expensesService.getMonthlySum(this.month, localStorage.getItem("userId")!).subscribe({
       next: (res) => {
         this.expenseSum = res
         
@@ -86,8 +87,6 @@ export class DashboardComponent implements OnInit {
         }
       }
     })
-
-    
     
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe()
@@ -98,11 +97,17 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     const token = localStorage.getItem("token")
 
+    this.activatedRoute.paramMap.subscribe(params => {
+      if(params.get("userid") != localStorage.getItem("userId")) {
+        this.router.navigate([`/landing`])
+      }
+    })
+
     if(!token) {
       this.router.navigate(["/login"])
     }
 
-    const subscription = this.categoryService.getCategories().subscribe({
+    const subscription = this.categoryService.getCategories(localStorage.getItem("userId")!).subscribe({
       next: (res) => {
         this.categories=res
       }
@@ -149,6 +154,7 @@ export class DashboardComponent implements OnInit {
 
     const subscription = this.expensesService.addNewExpense(
       {
+        userId: localStorage.getItem("userId"),
         month: this.month,
         category: this.addExpenseForm.value.category,
         amount: this.addExpenseForm.value.amount,
@@ -182,7 +188,7 @@ export class DashboardComponent implements OnInit {
     const dialog = document.getElementById("editExpenseDialog") as HTMLElement
     let currentExpense:any;
 
-    const subscription = this.expensesService.getExpenseById(expenseId).subscribe({
+    const subscription = this.expensesService.getExpenseById(expenseId, localStorage.getItem("userId")!).subscribe({
       next: (res) => {
         currentExpense=res
         this.submitErr = false;
@@ -218,6 +224,7 @@ export class DashboardComponent implements OnInit {
       category: this.editExpenseForm.value.category,
       amount: this.editExpenseForm.value.amount,
       description: this.editExpenseForm.value.description,
+      userId: localStorage.getItem("userId")
     }).subscribe({
       next: (res) => {
         this.editExpenseForm.reset()
@@ -235,7 +242,8 @@ export class DashboardComponent implements OnInit {
 
   deleteExpense() {
     const subscription = this.expensesService.deleteExpense({
-      id: this.editExpenseForm.value.id
+      id: this.editExpenseForm.value.id,
+      userId: localStorage.getItem("userId")
     }).subscribe({
       next: (res) => {
         this.loadExpenses()
@@ -264,7 +272,7 @@ export class DashboardComponent implements OnInit {
   })
 
   getSalary(month:string) {
-    const subscription = this.salaryService.getSalaryByMonth(month).subscribe({
+    const subscription = this.salaryService.getSalaryByMonth(month, localStorage.getItem("userId")!).subscribe({
       next: (res) => {
         this.salary=res
       }
@@ -278,6 +286,7 @@ export class DashboardComponent implements OnInit {
       {
         amount: this.editSalaryForm.value.amount,
         month: this.month,
+        userId: localStorage.getItem("userId")
       }
     ).subscribe({
       next: (res) => {
@@ -295,7 +304,7 @@ export class DashboardComponent implements OnInit {
     const dialog = document.getElementById("editSalaryDialog") as HTMLElement
     let currentSalary:any;
 
-    const subscription = this.salaryService.getSalaryByMonth(this.month).subscribe({
+    const subscription = this.salaryService.getSalaryByMonth(this.month, localStorage.getItem("userId")! ).subscribe({
       next: (res) => {
         currentSalary=res
 
@@ -321,7 +330,8 @@ export class DashboardComponent implements OnInit {
 
     const subscription = this.salaryService.editSalary({
       amount: this.editSalaryForm.value.amount,
-      month: this.month
+      month: this.month,
+      userId: localStorage.getItem("userId")
     }).subscribe({
       next: (res) => {
         this.editSalaryForm.reset()

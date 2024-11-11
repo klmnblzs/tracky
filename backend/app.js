@@ -31,10 +31,6 @@ app.get('/', (req, res) => {
     res.send("Welcome to the API!")
 })
 
-app.get('/validate', authenticateToken, (req, res) => {
-    res.json({message: "Valid token"})
-})
-
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     
@@ -50,7 +46,6 @@ function authenticateToken(req, res, next) {
         if (err) {
             return res.status(403).json({ message: "Token: Invalid" });
         }
-        console.log(decoded)
         req.user = decoded;
         next();
     });
@@ -101,6 +96,7 @@ app.post('/auth/login', async (req, res) => {
                 res.status(401).json({ error: "Rossz jelszó!"})
             } else {
                 const user = results[0][0]; 
+                req.body.id=user.id
                 const accessToken = generateAccessToken(req.body)
                 const refreshToken = await generateRefreshToken(user.id)
                 res.status(200).json({ token: accessToken, refreshToken: refreshToken })
@@ -232,11 +228,12 @@ app.get('/expenses', async (req, res) => {
     }
 })
 
-app.get('/expenses/id/:id', async (req, res) => {
+app.get('/expenses/id/:userid/:id', async (req, res) => {
     const id = req.params.id
+    const userid = req.params.userid
 
     try {
-        const [results] = await pool.execute('CALL GetExpenseByid(?)', [ id ])
+        const [results] = await pool.execute('CALL GetExpenseByid(?,?)', [ id, userid ])
         res.send(results[0][0])
     } catch (err) {
         console.log(err)
@@ -256,11 +253,25 @@ app.get('/expenses/month/:month', async (req, res) => {
     }
 })
 
-app.get('/expenses/month/sum/:month', async (req, res) => {
+app.get('/expenses/:userid/:month', async (req, res) => {
     const month = req.params.month
+    const userid = req.params.userid
 
     try {
-        const [results] = await pool.execute('CALL CalculateExpenseByMonth(?)', [ month ])
+        const [results] = await pool.execute('CALL GetExpensesByMonthAndId(?, ?)', [ month, userid ])
+        res.send(results[0])
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Internal server error" })
+    }
+})
+
+app.get('/expenses/month/sum/:userid/:month', async (req, res) => {
+    const month = req.params.month
+    const userId = req.params.userid
+
+    try {
+        const [results] = await pool.execute('CALL CalculateExpenseByMonth(?, ?)', [ month, userId ])
         res.send(results[0][0])
     } catch (err) {
         console.log(err)
@@ -270,29 +281,31 @@ app.get('/expenses/month/sum/:month', async (req, res) => {
 
 app.post('/expenses/new', authenticateToken, async (req, res) => {
     const {
+        userId,
         month,
         category,
         amount,
-        description
+        description,
     } = req.body
 
+    if(!userId) return res.status(400).json({ message: "Felhasználó azonosító megadása kötelező!" })
     if(!month) return res.status(400).json({ message: "Hónap megadása kötelező!" })
     if(!category) return res.status(400).json({ message: "Kategória megadása kötelező!" })
     if(!amount) return res.status(400).json({ message: "Összeg megadása kötelező!" })
     if(!description) return res.status(400).json({ message: "Leírás megadása kötelező!" })
 
     try {
-        const [result] = await pool.execute('CALL AddExpense(?,?,?,?)', [
+        const [result] = await pool.execute('CALL AddExpense(?,?,?,?,?)', [
             month,
             category,
             amount,
-            description
+            description,
+            userId
         ])
 
         if(result.affectedRows > 0) {
             return res.status(201).json({ message: 'Rekord rögzítve.' })
         } else {
-            console.log(result)
             return res.status(500).json({ message: 'Sikertelen rögzítés.' })
         }
     } catch (err) {
@@ -303,13 +316,14 @@ app.post('/expenses/new', authenticateToken, async (req, res) => {
 
 app.post('/expenses/delete', authenticateToken, async (req, res) => {
     const {
-        id
+        id,
+        userId
     } = req.body
 
     if(!id) return res.status(400).json({ message: "Rekordazonosító megadása kötelező!" })
 
     try {
-        const [result] = await pool.execute('CALL DeleteExpense(?)', [ id ])
+        const [result] = await pool.execute('CALL DeleteExpense(?,?)', [ id, userId ])
 
         if(result.affectedRows > 0) {
             res.status(201).json({ message: "Rekord törölve." })
@@ -328,7 +342,8 @@ app.post('/expenses/edit', authenticateToken, async (req, res) => {
         id,
         category,
         amount,
-        description
+        description,
+        userId
     } = req.body
 
     if(!id) return res.status(400).json({ message: "Rekordazonosító megadása kötelező!" })
@@ -337,7 +352,7 @@ app.post('/expenses/edit', authenticateToken, async (req, res) => {
     if(!description) return res.status(400).json({ message: "Leírás megadása kötelező!" })
 
     try {
-        const [result] = await pool.execute('CALL EditExpense(?, ?, ?, ?)', [ category, amount, description, id ])
+        const [result] = await pool.execute('CALL EditExpense(?, ?, ?, ?, ?)', [ category, amount, description, id, userId ])
 
         if(result.affectedRows > 0) {
             res.status(201).json({ message: "Rekord frissítve." })
@@ -353,9 +368,11 @@ app.post('/expenses/edit', authenticateToken, async (req, res) => {
 
 // KATEGÓRIÁK
 
-app.get('/categories', async (req, res) => {
+app.get('/categories/:userid', async (req, res) => {
+    const userId = req.params.userid
+
     try {
-        const [results] = await pool.execute('CALL GetCategories')
+        const [results] = await pool.execute('CALL GetCategories(?)', [userId] )
         res.send(results[0])
     } catch (err) {
         console.log(err)
@@ -365,14 +382,13 @@ app.get('/categories', async (req, res) => {
 
 app.post('/categories/new', authenticateToken, async (req, res) => {
     const {
-        category
+        category,
+        userId
     } = req.body
     if(!category) return res.status(400).json({ message: "Kategória megadása kötelező!" })
 
     try {
-        const [result] = await pool.execute('CALL AddCategory(?)', [
-            category,
-        ])
+        const [result] = await pool.execute('CALL AddCategory(?,?)', [ category, userId ])
 
         if(result.affectedRows > 0) {
             return res.status(201).json({ message: 'Rekord rögzítve.' })
@@ -388,14 +404,13 @@ app.post('/categories/new', authenticateToken, async (req, res) => {
 
 app.post('/categories/delete', authenticateToken, async (req, res) => {
     const {
-        category
+        category,
+        userId
     } = req.body
     if(!category) return res.status(400).json({ message: "Kategória megadása kötelező!" })
 
     try {
-        const [result] = await pool.execute('CALL DeleteCategoryByName(?)', [
-            category,
-        ])
+        const [result] = await pool.execute('CALL DeleteCategoryByName(?,?)', [ category, userId ])
 
         if(result.affectedRows > 0) {
             return res.status(201).json({ message: 'Rekord törölve.' })
@@ -414,14 +429,16 @@ app.post('/categories/delete', authenticateToken, async (req, res) => {
 app.post('/salary/new', authenticateToken, async (req, res) => {
     const {
         amount,
-        month
+        month,
+        userId
     } = req.body
     if(!amount) return res.status(400).json({ message: "Fizetés megadása kötelező!" })
     if(!month) return res.status(400).json({ message: "Hónap megadása kötelező!" })
+    if(!userId) return res.status(400).json({ message: "id megadása kötelező!" })
     
     try {
         
-        const [results] = await pool.execute('CALL AddSalary(?,?)', [amount, month])
+        const [results] = await pool.execute('CALL AddSalary(?, ?, ?)', [amount, month, userId])
 
         if(results.affectedRows > 0) {
             return res.status(201).json({ message: 'Rekord rögzítve.' })
@@ -439,14 +456,16 @@ app.post('/salary/new', authenticateToken, async (req, res) => {
 app.post('/salary/edit', authenticateToken, async (req, res) => {
     const {
         amount,
-        month
+        month,
+        userId
     } = req.body
     if(!amount) return res.status(400).json({ message: "Fizetés megadása kötelező!" })
     if(!month) return res.status(400).json({ message: "Hónap megadása kötelező!" })
+    if(!userId) return res.status(400).json({ message: "id megadása kötelező!" })
     
     try {
         
-        const [results] = await pool.execute('CALL EditSalary(?,?)', [amount, month])
+        const [results] = await pool.execute('CALL EditSalary(?,?,?)', [amount, month, userId])
 
         if(results.affectedRows > 0) {
             return res.status(201).json({ message: 'Rekord frissítve.' })
@@ -461,11 +480,12 @@ app.post('/salary/edit', authenticateToken, async (req, res) => {
     }
 })
 
-app.get('/salary/get/:month', async (req, res) => {
+app.get('/salary/get/:userid/:month', async (req, res) => {
     const month = req.params.month
+    const userid = req.params.userid
 
     try {
-        const [results] = await pool.execute('CALL GetSalaryByMonth(?)', [ month ])
+        const [results] = await pool.execute('CALL GetSalaryByMonth(?, ?)', [ month, userid ])
         res.send(results[0][0])
     } catch (err) {
         console.log(err)

@@ -2,7 +2,7 @@
     <ul>
         <img src="tracky-logo.png" routerLink="/dashboard" alt="" id="logo">
         @for (month of months; track $index) {
-            <li [routerLink]="'/dashboard/'+removeEkezet(month.toLocaleLowerCase())"><a>{{ month }}</a></li>
+            <li [routerLink]="'/dashboard/' + userId + '/'+removeEkezet(month.toLocaleLowerCase())"><a>{{ month }}</a></li>
         }
     </ul>
 </nav>

@@ -20,7 +20,7 @@ export class CategoriesComponent {
   categories:any = null;
 
   ngOnInit(): void {
-    const subscription = this.categoryService.getCategories().subscribe({
+    const subscription = this.categoryService.getCategories(localStorage.getItem("userId")!).subscribe({
       next: (res) => {
         this.categories=res
       }
@@ -28,7 +28,7 @@ export class CategoriesComponent {
   }
 
   loadCategories() {
-    const subscription = this.categoryService.getCategories().subscribe({
+    const subscription = this.categoryService.getCategories(localStorage.getItem("userId")!).subscribe({
       next: (res) => {
         this.categories=res
       }
@@ -74,6 +74,7 @@ export class CategoriesComponent {
     const subscription = this.categoryService.addNewCategory(
       {
         category: this.addCategoryForm.value.category,
+        userId: localStorage.getItem("userId")
       }
     ).subscribe({
       next: (res) => {
@@ -87,7 +88,7 @@ export class CategoriesComponent {
   }
 
   deleteCategoryForm = new FormGroup({
-    category: new FormControl('')
+    category: new FormControl(''),
   })
 
   onSubmitDelete() {
@@ -96,6 +97,7 @@ export class CategoriesComponent {
     const subscription = this.categoryService.deleteCategory(
       {
         category: this.deleteCategoryForm.value.category,
+        userId: localStorage.getItem("userId")
       }
     ).subscribe({
       next: (res) => {

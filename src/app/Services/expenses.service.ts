@@ -17,16 +17,23 @@ export class ExpensesService {
     )
   }
 
-  getMonthlySum(month:string) {
+  getExpensesByMonthAndId(month:string, userid:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/expenses/month/sum/" + month,
+      `http://localhost:3000/expenses/${userid}/${month}`,
       "Error fetching expense"
     )
   }
 
-  getExpenseById(id:number) {
+  getMonthlySum(month:string, userid:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/expenses/id/" + id,
+      "http://localhost:3000/expenses/month/sum/" + userid + "/" + month,
+      "Error fetching expense"
+    )
+  }
+
+  getExpenseById(id:number, userid:string) {
+    return this.requestsManager.fetch(
+      "http://localhost:3000/expenses/id/" + userid + "/" + id,
       "Error fetching expense"
     )
   }

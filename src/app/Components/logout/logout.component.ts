@@ -12,7 +12,7 @@ import { throwError } from 'rxjs';
   styleUrl: './logout.component.scss'
 })
 export class LogoutComponent implements OnInit {
-  AuthService = inject(AuthService)
+  authService = inject(AuthService)
   router = inject(Router)
   localStorageService = inject(LocalStorageService)
 
@@ -25,11 +25,12 @@ export class LogoutComponent implements OnInit {
       return;
     }
 
-    this.AuthService.logoutUser({ refreshToken }).subscribe({
+    this.authService.logoutUser({ refreshToken }).subscribe({
       next: (res) => {
         this.localStorageService.removeItem("token");
         this.localStorageService.removeItem("refreshToken");
-
+        this.localStorageService.removeItem("userId");
+        
         this.router.navigate(["/login"]);
       },
       error: (err) => {
