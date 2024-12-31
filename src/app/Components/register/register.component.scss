@@ -1,8 +1,10 @@
-$background: #180161;
-$accent: #4F1787;
-$btn-base: #EB3678;
-$btn-edit:#FB773C;
-$btn-success: #3feb36;
+// $background: #180161;
+$background: #1f1f1f;
+// $accent: #4F1787;
+$accent: #393939;
+$btn-base: #e85050;
+$btn-edit:#e8926a;
+$btn-success: #7ac657;
 $btn-nvm: #8a8a8a;
 
 .container {
@@ -35,6 +37,7 @@ $btn-nvm: #8a8a8a;
         input[type='submit'] {
             width: 100%;
             background-color: $btn-base;
+            color: white;
             border: none;
             outline: none;
             padding: 7px;
@@ -46,9 +49,7 @@ $btn-nvm: #8a8a8a;
         }
 
         input[type='submit']:hover {
-            background-color: rgba(0,0,0,0);
-            color: $btn-base;
-            border: 2px solid $btn-base;
+            opacity: .8;
             padding: 9px;
         }
 

@@ -91,7 +91,7 @@
       @if(formatMonth(this.month) !== "undefined") {
         <div id="navigation-container">
           <h1>{{ formatMonth(this.month) }}</h1>
-          <button (click)="openAddDialog()">Új hozzáadása</button>
+          <button (click)="openAddDialog()" id="addBtn">Új hozzáadása</button>
           @if(this.salary === null) {
             <button (click)="openSalaryAddDialog()" id="editBtn" style="margin-left:10px;">Fizetés rögzítése</button>
           } @else {

@@ -23,14 +23,14 @@ export class AuthService {
 
   loginUser(formData:Object) {
     return this.post(
-      "http://localhost:3000/auth/login",
+      "http://192.168.0.156:3000/auth/login",
       formData,
       "Error while logging in"
     )
   }
   registerUser(formData:Object) {
     return this.post(
-      "http://localhost:3000/auth/register",
+      "http://192.168.0.156:3000/auth/register",
       formData,
       "Error while registering"
     )
@@ -54,7 +54,7 @@ export class AuthService {
 
   logoutUser(body:Object) {
     return this.logOutManager(
-      "http://localhost:3000/auth/logout",
+      "http://192.168.0.156:3000/auth/logout",
       body,
       "Error while logging out"
     )
@@ -75,6 +75,6 @@ export class AuthService {
   }
 
   checkUsername(username: string) {
-    return this.httpClient.post('http://localhost:3000/auth/check-duplicate', { username });
+    return this.httpClient.post('http://192.168.0.156:3000/auth/check-duplicate', { username });
   }
 }

@@ -1,8 +1,10 @@
-$background: #180161;
-$accent: #4F1787;
+// $background: #180161;
+$background: #1f1f1f;
+// $accent: #4F1787;
+$accent: #393939;
 $btn-base: #EB3678;
-$btn-edit:#FB773C;
-$btn-success: #3feb36;
+$btn-edit:#e8926a;
+$btn-success: #7ac657;
 $btn-nvm: #8a8a8a;
 
 .container {
@@ -121,16 +123,6 @@ dialog {
                 font-size: 15px;
                 color: #c9c9c9;
             }
-        }
-
-        select {
-            width: 100%;
-            padding: 5px;
-            margin-bottom: 10px;
-            background-color: $background;
-            border: 1px solid $accent;
-            outline: none;
-            color: white;
         }
     }
 }

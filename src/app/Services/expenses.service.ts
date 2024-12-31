@@ -12,35 +12,35 @@ export class ExpensesService {
 
   getExpensesByMonth(month:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/expenses/month/" + month,
+      "http://192.168.0.156:3000/expenses/month/" + month,
       "Error fetching expense"
     )
   }
 
   getExpensesByMonthAndId(month:string, userid:string) {
     return this.requestsManager.fetch(
-      `http://localhost:3000/expenses/${userid}/${month}`,
+      `http://192.168.0.156:3000/expenses/${userid}/${month}`,
       "Error fetching expense"
     )
   }
 
   getMonthlySum(month:string, userid:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/expenses/month/sum/" + userid + "/" + month,
+      "http://192.168.0.156:3000/expenses/month/sum/" + userid + "/" + month,
       "Error fetching expense"
     )
   }
 
   getExpenseById(id:number, userid:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/expenses/id/" + userid + "/" + id,
+      "http://192.168.0.156:3000/expenses/id/" + userid + "/" + id,
       "Error fetching expense"
     )
   }
 
   addNewExpense(formData:Object) {
     return this.requestsManager.post(
-      "http://localhost:3000/expenses/new",
+      "http://192.168.0.156:3000/expenses/new",
       formData,
       "Error while adding new user"
     )
@@ -48,7 +48,7 @@ export class ExpensesService {
 
   editExpense(formData:Object) {
     return this.requestsManager.post(
-      "http://localhost:3000/expenses/edit",
+      "http://192.168.0.156:3000/expenses/edit",
       formData,
       "Error while adding new user"
     )
@@ -56,7 +56,7 @@ export class ExpensesService {
 
   deleteExpense(formData:Object) {
     return this.requestsManager.post(
-      "http://localhost:3000/expenses/delete",
+      "http://192.168.0.156:3000/expenses/delete",
       formData,
       "Error while adding new user"
     )

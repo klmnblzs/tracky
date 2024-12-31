@@ -1,8 +1,10 @@
-$background: #180161;
-$accent: #4F1787;
-$btn-base: #EB3678;
-$btn-edit:#FB773C;
-$btn-success: #3feb36;
+// $background: #180161;
+$background: #1f1f1f;
+// $accent: #4F1787;
+$accent: #393939;
+$btn-base: #e85050;
+$btn-edit:#e8926a;
+$btn-success: #7ac657;
 $btn-nvm: #8a8a8a;
 
 /* You can add global styles to this file, and also import other style files */
@@ -21,51 +23,52 @@ body {
 }
 
 #deleteBtn {
-    border: 2px solid $btn-base;
-    color: $btn-base;
+    border: none;
+    background-color: $btn-base;
+    color: white;
     margin-right: 10px
 }
 
 #deleteBtn:hover {
-    background-color: $btn-base;
-    color: white;
+    opacity: .8;
     padding: 8px;
 }
 
 #nvmBtn {
-    border: 2px solid $btn-nvm;
-    color: $btn-nvm;
+    border: none;
+    background-color: $btn-nvm;
+    color: white;
     margin-right: 10px;
 }
 
 #nvmBtn:hover {
-    background-color: $btn-nvm;
-    color: white;
     padding: 8px;
+    opacity: .8;
 }
 
 #addBtn {
-    border: 2px solid $btn-success;
-    color: $btn-success;
+    // border: 2px solid $btn-success;
+    border: none;
+    background-color: $btn-success;
     margin-right: 10px;
+    color: white;
 }
 
 #addBtn:hover {
-    background-color: $btn-success;
-    color: white;
+    opacity: .8;
     padding: 8px;
 }
 
 
 #editBtn {
-    border: 2px solid $btn-edit;
-    color: $btn-edit;
+    background-color: $btn-edit;
+    border: none;
+    color: white;
     margin-right: 10px;
 }
 
 #editBtn:hover {
-    background-color: $btn-edit;
-    color: white;
+    opacity: .8;
     padding: 8px;
 }
 
@@ -88,11 +91,22 @@ input[type='text']:focus, input[type='number']:focus, input[type='password']:foc
     border: 1px solid $btn-edit;
 }
 
+select {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    background-color: $background;
+    border: 1px solid $accent;
+    outline: none;
+    color: white;
+}
 
 button {
+    color: white;
     padding: 7px;
     outline: none;
-    border: 2px solid $btn-base;
+    border: none;
+    // border: 2px solid $btn-base;
     background-color: rgba(0,0,0,0);
     color: $btn-base;
     border-radius: 30px;
@@ -100,12 +114,11 @@ button {
     margin-top: 10px;
     cursor: pointer;
 
-    transition: .3s background-color, .3s padding, .3s color;
+    transition: .3s background-color, .3s padding, .3s color, .3s opacity;
 }
 
 button:hover {
     padding: 8px;
-    color: white;
     background-color: $btn-base;
 }
 

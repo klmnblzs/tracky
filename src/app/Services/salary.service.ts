@@ -12,14 +12,14 @@ export class SalaryService {
 
   getSalaryByMonth(month:string, userId:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/salary/get/" + userId + "/" + month,
+      "http://192.168.0.156:3000/salary/get/" + userId + "/" + month,
       "Error fetching salary"
     )
   }
 
   addSalary(formData:Object) {
     return this.requestsManager.post(
-      "http://localhost:3000/salary/new",
+      "http://192.168.0.156:3000/salary/new",
       formData,
       "Error while adding salary"
     )
@@ -27,7 +27,7 @@ export class SalaryService {
 
   editSalary(formData:Object) {
     return this.requestsManager.post(
-      "http://localhost:3000/salary/edit",
+      "http://192.168.0.156:3000/salary/edit",
       formData,
       "Error while editing salary"
     )

@@ -22,30 +22,30 @@ export class LoginComponent implements OnInit {
     password: new FormControl('', { validators: Validators.required })
   })
 
-  loginError=false;
+  loginError = false;
 
   ngOnInit(): void {
-    if(localStorage.getItem("token") && localStorage.getItem("refreshToken")) {
+    if (localStorage.getItem("token") && localStorage.getItem("refreshToken")) {
       this.router.navigate(["/landing"])
     }
   }
 
   onLogin() {
-    if(this.loginForm.valid) {
+    if (this.loginForm.valid) {
       const subscription = this.authService.loginUser({
         username: this.loginForm.value.username,
         password: this.loginForm.value.password,
       }).subscribe({
         next: (res: any) => {
           this.localStorageService.setItem("token", res.token)
-          const userid=this.authService.getUserDataFromToken().id
+          const userid = this.authService.getUserDataFromToken().id
           this.localStorageService.setItem("userId", userid)
           this.localStorageService.setItem("refreshToken", res.refreshToken)
           setTimeout(() => {
             this.router.navigate(["/landing"])
           })
         }, error: (err) => {
-          this.loginError=true
+          this.loginError = true
         }
       })
       this.destroyRef.onDestroy(() => subscription.unsubscribe())

@@ -11,8 +11,7 @@ app.use(express.json())
 
 app.use(cors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'id', 'Authorization']
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
 }))
 
 dotenv.config()
@@ -52,7 +51,7 @@ function authenticateToken(req, res, next) {
 }
 
 function generateAccessToken(data) {
-    return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
+    return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '365d' })
 }
 
 async function generateRefreshToken(userId) {
