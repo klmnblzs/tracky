@@ -10,8 +10,17 @@ $btn-nvm: #8a8a8a;
 .container {
     color: white;
 
-    margin-left: 10vw;
+    margin-left: 12vw;
     padding: 40px;
+
+    hr {
+        display: block;
+        height: 1px;
+        border: 0;
+        border-top: 1px solid #a1a1a1;
+        padding: 0;
+        margin: 25px 0;
+    }
 
     .title {
         display: flex;
@@ -55,13 +64,17 @@ $btn-nvm: #8a8a8a;
 
         .expense {
             border: 2px solid $accent;
-            padding: 15px;
+            padding: 20px;
             margin: 0 15px 0 15px;
             border-radius: 15px;
             cursor: pointer;
             transition: .3s;
             width: 250px;
             margin-top: 25px;
+
+            &:hover {
+                background-color: $accent;
+            }
 
             h2 {
                 font-size: 18px;
@@ -77,11 +90,6 @@ $btn-nvm: #8a8a8a;
                 font-weight: bold;
                 margin-top: 15px;
             }
-        }
-
-        .expense:hover {
-            background-color: $accent;
-            padding: 17px;
         }
     }
 }

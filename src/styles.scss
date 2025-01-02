@@ -26,12 +26,7 @@ body {
     border: none;
     background-color: $btn-base;
     color: white;
-    margin-right: 10px
-}
-
-#deleteBtn:hover {
-    opacity: .8;
-    padding: 8px;
+    margin-right: 10px;
 }
 
 #nvmBtn {
@@ -39,11 +34,6 @@ body {
     background-color: $btn-nvm;
     color: white;
     margin-right: 10px;
-}
-
-#nvmBtn:hover {
-    padding: 8px;
-    opacity: .8;
 }
 
 #addBtn {
@@ -54,22 +44,11 @@ body {
     color: white;
 }
 
-#addBtn:hover {
-    opacity: .8;
-    padding: 8px;
-}
-
-
 #editBtn {
     background-color: $btn-edit;
     border: none;
     color: white;
     margin-right: 10px;
-}
-
-#editBtn:hover {
-    opacity: .8;
-    padding: 8px;
 }
 
 input[type='text'], input[type='number'], input[type='password'] {
@@ -103,23 +82,21 @@ select {
 
 button {
     color: white;
-    padding: 7px;
+    padding: 10px;
     outline: none;
     border: none;
-    // border: 2px solid $btn-base;
     background-color: rgba(0,0,0,0);
     color: $btn-base;
-    border-radius: 30px;
+    border-radius: 5px;
     font-weight: bold;
     margin-top: 10px;
     cursor: pointer;
 
     transition: .3s background-color, .3s padding, .3s color, .3s opacity;
-}
 
-button:hover {
-    padding: 8px;
-    background-color: $btn-base;
+    &:hover {
+        opacity: .8;
+    }
 }
 
 .error {

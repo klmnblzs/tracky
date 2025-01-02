@@ -19,14 +19,16 @@
         <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.addExpenseForm.controls.amount.invalid && this.addExpenseForm.controls.amount.touched">
         <label for="description">Mire? <span class="required">*</span></label>
         <input type="text" id="description" name="description" formControlName="description" [class.invalid]="this.addExpenseForm.controls.description.invalid && this.addExpenseForm.controls.description.touched">
+        
+        @if(this.submitErr == true) {
+          <p class="error">Hiba a hozzáadás közben!<br>Töltsd ki helyesen!</p>
+        }
+
+        <div>
+          <button (click)="hideAddDialog()" id="nvmBtn">Mégse</button>
+          <button (click)="onAddExpense()" type="submit" id="addBtn">Rögzítés</button>
+        </div>
       </form>
-      @if(this.submitErr == true) {
-        <p class="error">Hiba a hozzáadás közben!<br>Töltsd ki helyesen!</p>
-      }
-    </div>
-    <div>
-      <button (click)="hideAddDialog()" id="nvmBtn">Mégse</button>
-      <button (click)="onAddExpense()" id="addBtn">Rögzítés</button>
     </div>
   </div>
 </dialog>
@@ -51,7 +53,6 @@
         <label for="description">Mire? <span class="required">*</span></label>
         <input type="text" id="description" name="description" formControlName="description" [class.invalid]="this.editExpenseForm.controls.description.invalid && this.editExpenseForm.controls.description.touched">
       </form>
-      
     </div>
     <div>
       <button (click)="deleteExpense()" id="deleteBtn">Törlés</button>
@@ -69,18 +70,19 @@
       <h2>{{ formatMonth(this.month) }}i fizetés: <span class="required">*</span></h2>
     </div>
     <div id="formContainer">
-      <form [formGroup]="editSalaryForm" (ngSubmit)="onEditSalary()" >
+      <form [formGroup]="editSalaryForm" (ngSubmit)="this.salary === null ? onAddSalary() : onEditSalary()" >
         <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.editSalaryForm.controls.amount.invalid && this.editSalaryForm.controls.amount.touched">
+        
+        <div>
+          <button (click)="hideSalaryDialog()" id="nvmBtn">Mégse</button>
+          
+          @if(this.salary === null) {
+            <button (click)="onAddSalary()" id="addBtn" style="margin-left:10px;">Rögzítés</button>
+          } @else {
+            <button (click)="onEditSalary()" id="editBtn" style="margin-left:10px;">Szerkesztés</button>
+          }
+        </div>
       </form>
-    </div>
-    <div>
-      <button (click)="hideSalaryDialog()" id="nvmBtn">Mégse</button>
-      
-      @if(this.salary === null) {
-        <button (click)="onAddSalary()" id="addBtn" style="margin-left:10px;">Rögzítés</button>
-      } @else {
-        <button (click)="onEditSalary()" id="editBtn" style="margin-left:10px;">Szerkesztés</button>
-      }
     </div>
   </div>
 </dialog>
@@ -104,9 +106,10 @@
               <h2 id="moneyspent">- Fizetésed: <span id="price">{{ this.salary.amount | number}} Ft</span></h2>
             }
           }
+          
           @if(this.expenseSum !== null) {
             @if(this.expenseSum.sum !== null) {
-              <h2 id="moneyspent">- Költéseid: <span id="price">{{ expenseSum.sum | number}} Ft</span></h2>
+              <h2 id="moneyspent">- Költéseid: <span id="price">{{ this.expenseSum.sum | number}} Ft</span></h2>
             }
           }
 
@@ -119,6 +122,7 @@
       }
     </div>
   </div>
+  <hr>
       @if(this.expenses !== null) {
         @if(this.expenses.length > 0) {
           <div class="expenses">

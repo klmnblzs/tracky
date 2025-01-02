@@ -16,26 +16,6 @@ $btn-nvm: #8a8a8a;
     width: 300px;
     margin-top: 25px;
 
-    button {
-        padding: 6px;
-        outline: none;
-        border: 2px solid #EB3678;
-        background-color: rgba(0,0,0,0);
-        color: #EB3678;
-        border-radius: 30px;
-        font-weight: bold;
-        margin-top: 20px;
-        cursor: pointer;
-
-        transition: .3s
-    }
-
-    button:hover {
-        background-color: #EB3678;
-        color: white;
-        padding: 8px;
-    }
-
     ul {
         margin-left: 50px;
     }
