@@ -10,12 +10,13 @@ export const routes: Routes = [
     { path: '', component: LoginComponent},
     { path: 'dashboard', component: LandingComponent },
     // { path: 'dashboard/:month', component: DashboardComponent },
-    { path: 'dashboard/:userid/:month', component: DashboardComponent },
+    // { path: 'dashboard/:userid/:month', component: DashboardComponent },
+    { path: 'dashboard/:userid/:year/:month', component: DashboardComponent },
 
     { path: 'login', component: LoginComponent},
     { path: 'logout', component: LogoutComponent },
 
     { path: 'register', component: RegisterComponent },
 
-    { path: "**", component: LandingComponent}
+    { path: "**", component: LandingComponent }
 ];

@@ -10,16 +10,23 @@ export class SalaryService {
   private httpClient = inject(HttpClient)
   private requestsManager = inject(RequestsService)
 
-  getSalaryByMonth(month:string, userId:string) {
+  getSalaryByMonth(month:string, year:string, userId:string) {
     return this.requestsManager.fetch(
-      "http://192.168.0.156:3000/salary/get/" + userId + "/" + month,
+      "http://localhost:3000/salary/get/" + userId + "/" + year + "/" + month,
+      "Error fetching salary"
+    )
+  }
+  
+  getSalary(month:string, year:string, userId:string) {
+    return this.requestsManager.fetch(
+      "http://localhost:3000/salary/get/" + userId + "/" + year + "/" + month,
       "Error fetching salary"
     )
   }
 
   addSalary(formData:Object) {
     return this.requestsManager.post(
-      "http://192.168.0.156:3000/salary/new",
+      "http://localhost:3000/salary/new",
       formData,
       "Error while adding salary"
     )
@@ -27,7 +34,7 @@ export class SalaryService {
 
   editSalary(formData:Object) {
     return this.requestsManager.post(
-      "http://192.168.0.156:3000/salary/edit",
+      "http://localhost:3000/salary/edit",
       formData,
       "Error while editing salary"
     )

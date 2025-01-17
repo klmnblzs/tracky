@@ -1,8 +1,14 @@
 <nav>
     <ul>
-        <img src="tracky-logo.png" routerLink="/dashboard" alt="" id="logo">
+        <img src="tracky-logo.png" routerLink="/dashboard" alt="logo" id="logo">
+        <form [formGroup]="yearSelector">
+            <select name="yearSelector" id="yearSelector" formControlName="year">
+                <option value="2024" [selected]="this">2024</option>
+                <option value="2025">2025</option>
+            </select>
+        </form>
         @for (month of months; track $index) {
-            <li [routerLink]="'/dashboard/' + userId + '/'+removeEkezet(month.toLocaleLowerCase())"><a>{{ month }}</a></li>
+            <li [routerLink]="'/dashboard/' + userId + '/' + currentYear + '/' + removeEkezet(month.toLocaleLowerCase())"><a>{{ month }}</a></li>
         }
     </ul>
 </nav>

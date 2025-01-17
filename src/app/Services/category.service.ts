@@ -14,7 +14,7 @@ export class CategoryService {
 
   addNewCategory(formData:Object) {
     return this.requestsManager.post(
-      "http://192.168.0.156:3000/categories/new",
+      "http://localhost:3000/categories/new",
       formData,
       "Error while adding new user"
     )
@@ -22,7 +22,7 @@ export class CategoryService {
 
   deleteCategory(formData:Object) {
     return this.requestsManager.post(
-      "http://192.168.0.156:3000/categories/delete",
+      "http://localhost:3000/categories/delete",
       formData,
       "Error while adding new user"
     )
@@ -30,7 +30,7 @@ export class CategoryService {
 
   getCategories(userId:string) {
     return this.requestsManager.fetch(
-      "http://192.168.0.156:3000/categories/" + userId,
+      "http://localhost:3000/categories/" + userId,
       "Error fetching categories"
     )
   }

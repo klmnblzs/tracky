@@ -10,37 +10,37 @@ export class ExpensesService {
   private httpClient = inject(HttpClient)
   private requestsManager = inject(RequestsService)
 
-  getExpensesByMonth(month:string) {
+  getExpensesByMonth(month:string, userid:string) {
     return this.requestsManager.fetch(
-      "http://192.168.0.156:3000/expenses/month/" + month,
+      `http://localhost:3000/expenses/${userid}/${month}`,
       "Error fetching expense"
     )
   }
 
-  getExpensesByMonthAndId(month:string, userid:string) {
+  getExpense(month:string, year:string, userid:string) {
     return this.requestsManager.fetch(
-      `http://192.168.0.156:3000/expenses/${userid}/${month}`,
+      `http://localhost:3000/expenses/${userid}/${year}/${month}`,
       "Error fetching expense"
     )
   }
 
-  getMonthlySum(month:string, userid:string) {
+  getMonthlySum(month:string, year:string, userid:string) {
     return this.requestsManager.fetch(
-      "http://192.168.0.156:3000/expenses/month/sum/" + userid + "/" + month,
+      "http://localhost:3000/expenses/month/sum/" + userid + "/" + year + "/" + month,
       "Error fetching expense"
     )
   }
 
   getExpenseById(id:number, userid:string) {
     return this.requestsManager.fetch(
-      "http://192.168.0.156:3000/expenses/id/" + userid + "/" + id,
+      "http://localhost:3000/expenses/id/" + userid + "/" + id,
       "Error fetching expense"
     )
   }
 
   addNewExpense(formData:Object) {
     return this.requestsManager.post(
-      "http://192.168.0.156:3000/expenses/new",
+      "http://localhost:3000/expenses/new",
       formData,
       "Error while adding new user"
     )
@@ -48,7 +48,7 @@ export class ExpensesService {
 
   editExpense(formData:Object) {
     return this.requestsManager.post(
-      "http://192.168.0.156:3000/expenses/edit",
+      "http://localhost:3000/expenses/edit",
       formData,
       "Error while adding new user"
     )
@@ -56,7 +56,7 @@ export class ExpensesService {
 
   deleteExpense(formData:Object) {
     return this.requestsManager.post(
-      "http://192.168.0.156:3000/expenses/delete",
+      "http://localhost:3000/expenses/delete",
       formData,
       "Error while adding new user"
     )

@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-
-interface DateObject {
-  date: string;
-}
+import { Component, inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent {
-  months: string[] = ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"]
+export class NavbarComponent implements OnInit {
+  private router = inject(Router)
+
   userId = localStorage.getItem("userId")
+  currentYear:any = 2024;
+
+  months: string[] = ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"]
 
   removeEkezet(input: string): string {
     const ekezetek: { [key: string]: string } = {
@@ -26,7 +26,14 @@ export class NavbarComponent {
     return input.split('').map(char => ekezetek[char] || char).join('');
   }
 
-  onClick(month: string) {
-    console.log(this.removeEkezet(month.toLocaleLowerCase()))
+  yearSelector = new FormGroup({
+    year: new FormControl('')
+  })
+
+  ngOnInit(): void {
+    this.yearSelector.controls.year.valueChanges.subscribe((year) => {
+      this.currentYear = year
+      this.router.navigate(["/dashboard/" + this.userId + "/" + this.currentYear + "/" + "januar"])
+    })
   }
 }

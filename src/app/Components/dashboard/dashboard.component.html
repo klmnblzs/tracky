@@ -7,7 +7,7 @@
       <p>{{ formatMonth(this.month) }}</p>
     </div>
     <div id="formContainer">
-      <form [formGroup]="addExpenseForm" (ngSubmit)="onAddExpense()">
+      <form [formGroup]="addExpenseForm">
         <label for="category">Kategória <span class="required">*</span></label>
         <select name="category" id="category" formControlName="category">
           <option value="" disabled>Válassz kategóriát...</option>

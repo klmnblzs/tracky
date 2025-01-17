@@ -30,6 +30,8 @@ app.get('/', (req, res) => {
     res.send("Welcome to the API!")
 })
 
+// JSONWEBTOKEN
+
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     
@@ -77,6 +79,8 @@ async function generateRefreshToken(userId) {
         res.status(500).json({ error: "Refresh token adatbázisba rögzítése során probléma lépett fel!" })
     }
 }
+
+// AUTH
 
 app.post('/auth/login', async (req, res) => {
     const { username, password } = req.body
@@ -217,6 +221,8 @@ app.post('/auth/logout', async (req, res) => {
     }
 });
 
+// KIADÁS
+
 app.get('/expenses', async (req, res) => {
     try {
         const [results] = await pool.execute('CALL GetExpenses')
@@ -240,6 +246,7 @@ app.get('/expenses/id/:userid/:id', async (req, res) => {
     }
 })
 
+// DEPRECATED - FELESLEGES
 app.get('/expenses/month/:month', async (req, res) => {
     const month = req.params.month
 
@@ -252,12 +259,13 @@ app.get('/expenses/month/:month', async (req, res) => {
     }
 })
 
+// DEPRECATED - FELESLEGES
 app.get('/expenses/:userid/:month', async (req, res) => {
     const month = req.params.month
     const userid = req.params.userid
 
     try {
-        const [results] = await pool.execute('CALL GetExpensesByMonthAndId(?, ?)', [ month, userid ])
+        const [results] = await pool.execute('CALL GetExpensesByMonth(?, ?)', [ month, userid ])
         res.send(results[0])
     } catch (err) {
         console.log(err)
@@ -265,12 +273,27 @@ app.get('/expenses/:userid/:month', async (req, res) => {
     }
 })
 
-app.get('/expenses/month/sum/:userid/:month', async (req, res) => {
+app.get('/expenses/:userid/:year/:month', async (req, res) => {
     const month = req.params.month
-    const userId = req.params.userid
+    const userid = req.params.userid
+    const year = req.params.year
 
     try {
-        const [results] = await pool.execute('CALL CalculateExpenseByMonth(?, ?)', [ month, userId ])
+        const [results] = await pool.execute('CALL GetExpense(?, ?, ?)', [ month, year, userid ])
+        res.send(results[0])
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Internal server error" })
+    }
+})
+
+app.get('/expenses/month/sum/:userid/:year/:month', async (req, res) => {
+    const month = req.params.month
+    const userId = req.params.userid
+    const year = req.params.year
+
+    try {
+        const [results] = await pool.execute('CALL CalculateExpenseByMonth(?, ?, ?)', [ month, userId, year ])
         res.send(results[0][0])
     } catch (err) {
         console.log(err)
@@ -280,11 +303,12 @@ app.get('/expenses/month/sum/:userid/:month', async (req, res) => {
 
 app.post('/expenses/new', authenticateToken, async (req, res) => {
     const {
-        userId,
         month,
         category,
         amount,
         description,
+        userId,
+        year
     } = req.body
 
     if(!userId) return res.status(400).json({ message: "Felhasználó azonosító megadása kötelező!" })
@@ -292,14 +316,16 @@ app.post('/expenses/new', authenticateToken, async (req, res) => {
     if(!category) return res.status(400).json({ message: "Kategória megadása kötelező!" })
     if(!amount) return res.status(400).json({ message: "Összeg megadása kötelező!" })
     if(!description) return res.status(400).json({ message: "Leírás megadása kötelező!" })
+    if(!year) return res.status(400).json({ message: "Év megadása kötelező!" })
 
     try {
-        const [result] = await pool.execute('CALL AddExpense(?,?,?,?,?)', [
+        const [result] = await pool.execute('CALL AddExpense(?,?,?,?,?,?)', [
             month,
             category,
             amount,
             description,
-            userId
+            userId,
+            year
         ])
 
         if(result.affectedRows > 0) {
@@ -365,6 +391,80 @@ app.post('/expenses/edit', authenticateToken, async (req, res) => {
     }
 })
 
+// FIZETÉS
+
+app.post('/salary/new', authenticateToken, async (req, res) => {
+    const {
+        amount,
+        month,
+        userId,
+        year
+    } = req.body
+    if(!amount) return res.status(400).json({ message: "Fizetés megadása kötelező!" })
+    if(!month) return res.status(400).json({ message: "Hónap megadása kötelező!" })
+    if(!userId) return res.status(400).json({ message: "id megadása kötelező!" })
+    if(!year) return res.status(400).json({ message: "Év megadása kötelező!" })
+    
+    try {
+        
+        const [results] = await pool.execute('CALL AddSalary(?, ?, ?, ?)', [amount, month, userId, year])
+
+        if(results.affectedRows > 0) {
+            return res.status(201).json({ message: 'Rekord rögzítve.' })
+        } else {
+            console.log(results)
+            return res.status(500).json({ message: 'Sikertelen rögzítés.' })
+        }
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Internal server error" })
+    }
+})
+
+app.post('/salary/edit', authenticateToken, async (req, res) => {
+    const {
+        amount,
+        month,
+        userId,
+        year
+    } = req.body
+    if(!amount) return res.status(400).json({ message: "Fizetés megadása kötelező!" })
+    if(!month) return res.status(400).json({ message: "Hónap megadása kötelező!" })
+    if(!userId) return res.status(400).json({ message: "id megadása kötelező!" })
+    if(!year) return res.status(400).json({ message: "Év megadása kötelező!" })
+    
+    try {
+        
+        const [results] = await pool.execute('CALL EditSalary(?,?,?,?)', [amount, month, userId,year])
+
+        if(results.affectedRows > 0) {
+            return res.status(201).json({ message: 'Rekord frissítve.' })
+        } else {
+            console.log(results)
+            return res.status(500).json({ message: 'Sikertelen frissítés.' })
+        }
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Internal server error" })
+    }
+})
+
+app.get('/salary/get/:userid/:year/:month', async (req, res) => {
+    const month = req.params.month
+    const userid = req.params.userid
+    const year = req.params.year
+
+    try {
+        const [results] = await pool.execute('CALL GetSalary(?, ?, ?)', [ month, userid, year ])
+        res.send(results[0][0])
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Internal server error" })
+    }
+})
+
 // KATEGÓRIÁK
 
 app.get('/categories/:userid', async (req, res) => {
@@ -417,75 +517,6 @@ app.post('/categories/delete', authenticateToken, async (req, res) => {
             console.log(result)
             return res.status(500).json({ message: 'Sikertelen torlés.' })
         }
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ message: "Internal server error" })
-    }
-})
-
-// FIZETÉS
-
-app.post('/salary/new', authenticateToken, async (req, res) => {
-    const {
-        amount,
-        month,
-        userId
-    } = req.body
-    if(!amount) return res.status(400).json({ message: "Fizetés megadása kötelező!" })
-    if(!month) return res.status(400).json({ message: "Hónap megadása kötelező!" })
-    if(!userId) return res.status(400).json({ message: "id megadása kötelező!" })
-    
-    try {
-        
-        const [results] = await pool.execute('CALL AddSalary(?, ?, ?)', [amount, month, userId])
-
-        if(results.affectedRows > 0) {
-            return res.status(201).json({ message: 'Rekord rögzítve.' })
-        } else {
-            console.log(results)
-            return res.status(500).json({ message: 'Sikertelen rögzítés.' })
-        }
-
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ message: "Internal server error" })
-    }
-})
-
-app.post('/salary/edit', authenticateToken, async (req, res) => {
-    const {
-        amount,
-        month,
-        userId
-    } = req.body
-    if(!amount) return res.status(400).json({ message: "Fizetés megadása kötelező!" })
-    if(!month) return res.status(400).json({ message: "Hónap megadása kötelező!" })
-    if(!userId) return res.status(400).json({ message: "id megadása kötelező!" })
-    
-    try {
-        
-        const [results] = await pool.execute('CALL EditSalary(?,?,?)', [amount, month, userId])
-
-        if(results.affectedRows > 0) {
-            return res.status(201).json({ message: 'Rekord frissítve.' })
-        } else {
-            console.log(results)
-            return res.status(500).json({ message: 'Sikertelen frissítés.' })
-        }
-
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ message: "Internal server error" })
-    }
-})
-
-app.get('/salary/get/:userid/:month', async (req, res) => {
-    const month = req.params.month
-    const userid = req.params.userid
-
-    try {
-        const [results] = await pool.execute('CALL GetSalaryByMonth(?, ?)', [ month, userid ])
-        res.send(results[0][0])
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: "Internal server error" })
