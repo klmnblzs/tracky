@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { DashboardComponent } from "./Components/dashboard/dashboard.component";
-import { NavbarComponent } from './Components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
