@@ -2,5 +2,8 @@
 <div class="container">
     <h1>Puszinyuszi, {{ username }}</h1>
     <button (click)="logOut()" id="deleteBtn">Kijelentkezés</button>
-    <app-categories></app-categories>
+    <div class="elements-container">
+        <app-categories></app-categories>
+        <app-stats></app-stats>
+    </div>
 </div>

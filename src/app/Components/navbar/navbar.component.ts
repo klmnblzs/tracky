@@ -13,7 +13,7 @@ export class NavbarComponent implements OnInit {
   private router = inject(Router)
 
   userId = localStorage.getItem("userId")
-  currentYear:any = 2024;
+  currentYear:any = localStorage.getItem('currentYear');
 
   months: string[] = ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"]
 
@@ -31,8 +31,9 @@ export class NavbarComponent implements OnInit {
   })
 
   ngOnInit(): void {
-    this.yearSelector.controls.year.valueChanges.subscribe((year) => {
-      this.currentYear = year
+    this.yearSelector.controls.year.valueChanges.subscribe((year:any) => {
+      localStorage.setItem("currentYear", year)
+      this.currentYear = localStorage.getItem('currentYear')
       this.router.navigate(["/dashboard/" + this.userId + "/" + this.currentYear + "/" + "januar"])
     })
   }

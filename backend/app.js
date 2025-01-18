@@ -526,3 +526,17 @@ app.post('/categories/delete', authenticateToken, async (req, res) => {
 app.listen(3000, (req, res) => {
     console.log("Listening on port: 3000")
 })
+
+// Pie chart
+app.get('/stats/:userid', async (req, res) => {
+    const userId = req.params.userid
+
+    try {
+      const [results] = await pool.execute('CALL GetStatsChart(?)', [userId]);
+      res.send(results[0])
+    } catch (err) {
+        console.log(err)
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  

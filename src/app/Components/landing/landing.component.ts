@@ -6,11 +6,12 @@ import { CategoriesComponent } from "./categories/categories.component";
 import { NavbarComponent } from "../navbar/navbar.component";
 import { Router } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
+import { StatsComponent } from "./stats/stats.component";
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [ReactiveFormsModule, CategoriesComponent, NavbarComponent],
+  imports: [ReactiveFormsModule, CategoriesComponent, NavbarComponent, StatsComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss'
 })

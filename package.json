@@ -23,6 +23,7 @@
     "@coreui/coreui": "^5.2.0",
     "@coreui/icons-angular": "~5.2.22",
     "@popperjs/core": "~2.11.8",
+    "chart.js": "^4.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",

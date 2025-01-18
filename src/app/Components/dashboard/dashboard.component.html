@@ -40,7 +40,7 @@
       <p>{{ formatMonth(this.month) }}</p>
     </div>
     <div id="formContainer">
-      <form [formGroup]="editExpenseForm" (ngSubmit)="onEditExpense()" >
+      <form [formGroup]="editExpenseForm" >
         <label for="category">Kategória <span class="required">*</span></label>
         <select name="category" id="category" formControlName="category">
           <option value="" disabled>Válassz kategóriát...</option>
@@ -70,7 +70,7 @@
       <h2>{{ formatMonth(this.month) }}i fizetés: <span class="required">*</span></h2>
     </div>
     <div id="formContainer">
-      <form [formGroup]="editSalaryForm" (ngSubmit)="this.salary === null ? onAddSalary() : onEditSalary()" >
+      <form [formGroup]="editSalaryForm" >
         <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.editSalaryForm.controls.amount.invalid && this.editSalaryForm.controls.amount.touched">
         
         <div>
@@ -92,7 +92,7 @@
     <div>
       @if(formatMonth(this.month) !== "undefined") {
         <div id="navigation-container">
-          <h1>{{ formatMonth(this.month) }}</h1>
+          <h1>{{this.currentYear}}, {{ formatMonth(this.month) }}</h1>
           <button (click)="openAddDialog()" id="addBtn">Új hozzáadása</button>
           @if(this.salary === null) {
             <button (click)="openSalaryAddDialog()" id="editBtn" style="margin-left:10px;">Fizetés rögzítése</button>

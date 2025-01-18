@@ -3,7 +3,8 @@
         <img src="tracky-logo.png" routerLink="/dashboard" alt="logo" id="logo">
         <form [formGroup]="yearSelector">
             <select name="yearSelector" id="yearSelector" formControlName="year">
-                <option value="2024" [selected]="this">2024</option>
+                <option value="choose" disabled [selected]="this">Válassz egy évet...</option>
+                <option value="2024">2024</option>
                 <option value="2025">2025</option>
             </select>
         </form>

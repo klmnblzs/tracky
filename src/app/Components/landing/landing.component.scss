@@ -3,4 +3,11 @@
 
     margin-left: 12vw;
     padding: 40px;
+
+    .elements-container {
+        display: flex;
+        gap: 20px;
+        width: auto;
+        flex-wrap: wrap;
+    }
 }

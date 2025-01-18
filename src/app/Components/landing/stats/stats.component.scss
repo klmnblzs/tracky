@@ -1,0 +1,28 @@
+// $background: #180161;
+$background: #1f1f1f;
+// $accent: #4F1787;
+$accent: #393939;
+$btn-base: #EB3678;
+$btn-edit:#e8926a;
+$btn-success: #7ac657;
+$btn-nvm: #8a8a8a;
+
+.stats-container {
+    margin-top: 50px;
+    border: 2px solid $accent;
+    padding: 20px;
+    border-radius: 15px;
+    transition: .3s;
+    margin-top: 25px;
+    width: auto;
+
+    h2 {
+        margin-bottom: 25px;
+    }
+
+    canvas {
+        margin: auto;
+        display: block;
+        color: white;
+    }
+}
