@@ -2,11 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { ExpensesService } from '../../../Services/expenses.service';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-stats',
   standalone: true,
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './stats.component.html',
   styleUrl: './stats.component.scss'
 })
@@ -14,17 +15,41 @@ export class StatsComponent implements OnInit {
   private userId:any = localStorage.getItem('userId')
   private expensesService = inject(ExpensesService)
 
+  chart: Chart | null = null
+  currentYear:any = (new Date().getFullYear())
+
+  yearSelector = new FormGroup({
+    year: new FormControl('')
+  })
+
   ngOnInit(): void {
     this.loadChart()
+
+    this.yearSelector.controls.year.valueChanges.subscribe((year:any) => {
+      this.currentYear = year
+      this.deleteChart()
+      this.loadChart()
+    })
+  }
+
+  deleteChart() {
+    if(this.chart) {
+      this.chart.destroy()
+      this.chart = null
+    }
+  }
+
+  ngOnDestroy() {
+    this.deleteChart()
   }
 
   loadChart() {
-    this.expensesService.getExpenseStat(this.userId).subscribe({
+    this.expensesService.getExpenseStat(this.userId, this.currentYear).subscribe({
       next: (res:any) => {
         const labels = res.map( (item:any) => item.category );
         const values = res.map( (item:any) => item.total );
 
-        new Chart('pieChart', {
+        this.chart = new Chart('pieChart', {
           type: 'pie',
           data: {
             labels: labels,
@@ -32,16 +57,6 @@ export class StatsComponent implements OnInit {
               {
                 label: 'Költések',
                 data: values,
-                backgroundColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 206, 86)',
-                  'rgb(75, 192, 192)',
-                  'rgb(153, 102, 255)',
-                  'rgb(167, 66, 255)',
-                  'rgb(255, 66, 192)',
-                  'rgb(255, 249, 66)'
-                ],
                 hoverOffset: 4,
                 borderWidth: 0,
               },
@@ -50,6 +65,9 @@ export class StatsComponent implements OnInit {
           options: {
             responsive: true,
             plugins: {
+              colors: {
+                enabled: true
+              },
               legend: {
                 position: 'bottom',
                 labels: {
@@ -63,4 +81,6 @@ export class StatsComponent implements OnInit {
       }
     })
   }
+
+
 }

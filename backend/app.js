@@ -528,11 +528,12 @@ app.listen(3000, (req, res) => {
 })
 
 // Pie chart
-app.get('/stats/:userid', async (req, res) => {
+app.get('/stats/:userid/:year', async (req, res) => {
     const userId = req.params.userid
-
+    const year = req.params.year
+    
     try {
-      const [results] = await pool.execute('CALL GetStatsChart(?)', [userId]);
+      const [results] = await pool.execute('CALL GetStatsChart(?, ?)', [userId, year]);
       res.send(results[0])
     } catch (err) {
         console.log(err)

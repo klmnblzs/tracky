@@ -31,9 +31,9 @@ export class ExpensesService {
     )
   }
 
-  getExpenseStat(userid:string) {
+  getExpenseStat(userid:string, year:string) {
     return this.requestsManager.fetch(
-      "http://localhost:3000/stats/" + userid,
+      "http://localhost:3000/stats/" + userid + "/" + year,
       "Error fetching stats"
     )
   }

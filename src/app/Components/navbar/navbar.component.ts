@@ -13,7 +13,7 @@ export class NavbarComponent implements OnInit {
   private router = inject(Router)
 
   userId = localStorage.getItem("userId")
-  currentYear:any = localStorage.getItem('currentYear');
+  currentYear:any = localStorage.getItem('currentYear') ? localStorage.getItem("currentYear") : (new Date().getFullYear())
 
   months: string[] = ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"]
 
