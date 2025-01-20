@@ -540,4 +540,47 @@ app.get('/stats/:userid/:year', async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   });
-  
+
+// Év lekérés
+app.get('/years/:userid', async (req, res) => {
+    const userId = req.params.userid
+    
+    try {
+      const [results] = await pool.execute('CALL GetYears(?)', [userId]);
+      res.send(results[0])
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+ 
+app.post('/years/add', authenticateToken, async (req, res) => {
+    const {
+        year,
+        userId
+    } = req.body;
+    
+    if (!year) return res.status(400).json({ message: "Kategória megadása kötelező!" });
+    if (!userId) return res.status(400).json({ message: "Azonosító megadása kötelező!" });
+
+    try {
+        // Létezik-e már az év
+        const [checkResult] = await pool.execute( 'SELECT COUNT(*) AS count FROM years WHERE year = ? AND user_id = ?',  [year, userId] );
+
+        if (checkResult[0].count > 0) {
+            return res.status(400).json({ message: "Ez az év már létezik." });
+        }
+
+        const [result] = await pool.execute('CALL AddYear(?, ?)', [year, userId]);
+
+        if (result.affectedRows > 0) {
+            return res.status(201).json({ message: 'Rekord rögzítve.' });
+        } else {
+            console.log(result);
+            return res.status(500).json({ message: 'Sikertelen hozzáadás.' });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});

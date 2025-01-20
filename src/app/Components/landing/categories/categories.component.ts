@@ -41,28 +41,15 @@ export class CategoriesComponent {
   }
 
   // DIALOG
-  openAddCategoryDialog() {
-    const dialog = document.getElementById("addCategoryDialog") as HTMLElement
-    
-    dialog.style.visibility = "unset"
+
+  addCategoryDialog = false;
+  isAddCategoryDialogShown() {
+    this.addCategoryDialog = !this.addCategoryDialog
   }
 
-  hideAddCategoryDialog() {
-    const dialog = document.getElementById("addCategoryDialog") as HTMLElement
-    
-    dialog.style.visibility = "hidden"
-  }
-
-  openDeleteCategoryDialog() {
-    const dialog = document.getElementById("removeCategoryDialog") as HTMLElement
-    
-    dialog.style.visibility = "unset"
-  }
-
-  hideDeleteCategoryDialog() {
-    const dialog = document.getElementById("removeCategoryDialog") as HTMLElement
-    
-    dialog.style.visibility = "hidden"
+  deleteCategoryDialog = false;
+  isDeleteCategoryDialogShown() {
+    this.deleteCategoryDialog = !this.deleteCategoryDialog
   }
 
   // FORM
@@ -80,7 +67,7 @@ export class CategoriesComponent {
       next: (res) => {
         this.addCategoryForm.reset()
         this.loadCategories()
-        this.hideAddCategoryDialog()
+        this.isAddCategoryDialogShown()
       }
     })
     
@@ -102,7 +89,7 @@ export class CategoriesComponent {
     ).subscribe({
       next: (res) => {
         this.loadCategories()
-        this.hideDeleteCategoryDialog()
+        this.isDeleteCategoryDialogShown()
       }
     })
     

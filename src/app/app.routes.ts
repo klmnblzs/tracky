@@ -8,7 +8,7 @@ import { RegisterComponent } from './Components/register/register.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent},
-    { path: 'dashboard', component: LandingComponent },
+    { path: 'dashboard', component: LandingComponent, data: { animation: "fasz" } },
     // { path: 'dashboard/:month', component: DashboardComponent },
     // { path: 'dashboard/:userid/:month', component: DashboardComponent },
     { path: 'dashboard/:userid/:year/:month', component: DashboardComponent },

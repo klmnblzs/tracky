@@ -1,11 +1,39 @@
+@if(showAddYearDialog) {
+    <dialog id="addYearDialog">
+        <div class="panel">
+          <div id="title-container">
+            <h2>Új év hozzáadása <span class="required">*</span></h2>
+          </div>
+          <div id="formContainer">
+            <form [formGroup]="addYearForm" (ngSubmit)="onAddYear()">
+              <input type="number" id="year" name="year" formControlName="year" min="0" [class.invalid]="this.addYearForm.controls.year.invalid && this.addYearForm.controls.year.touched">
+              @if(errorMsg) {
+                <p class="error">{{ errorMsg }}</p>
+              }
+            </form>
+            <div>
+              <button (click)="isAddYearDialogShown()" id="nvmBtn">Mégse</button>
+              <button (click)="onAddYear()" id="addBtn" style="margin-left:10px;">Rögzítés</button>
+            </div>
+          </div>
+        </div>
+    </dialog>
+}
+
 <nav>
     <ul>
         <img src="tracky-logo.png" routerLink="/dashboard" alt="logo" id="logo">
         <form [formGroup]="yearSelector">
             <select name="yearSelector" id="yearSelector" formControlName="year">
                 <option value="choose" disabled [selected]="this">Válassz egy évet...</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
+                @if(this.years) {
+                    @if(this.years.length !== 0) {
+                        @for (year of years; track $index) {
+                            <option [value]="year.year">{{ year.year }}</option>
+                        }
+                    }
+                }
+                <option value="new">Új év hozzáadása</option>
             </select>
         </form>
         @for (month of months; track $index) {

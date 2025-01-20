@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { ExpensesService } from '../../../Services/expenses.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { YearsService } from '../../../Services/years.service';
 
 @Component({
   selector: 'app-stats',
@@ -14,6 +15,8 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 export class StatsComponent implements OnInit {
   private userId:any = localStorage.getItem('userId')
   private expensesService = inject(ExpensesService)
+  private yearsService = inject(YearsService)
+  private destroyRef = inject(DestroyRef)
 
   chart: Chart | null = null
   currentYear:any = (new Date().getFullYear())
@@ -22,8 +25,21 @@ export class StatsComponent implements OnInit {
     year: new FormControl('')
   })
 
+  years:any;
+
+  getYears() {
+    const subscription = this.yearsService.getYears(this.userId!).subscribe({
+      next: (res:any) => {
+        this.years = res;
+      }
+    })
+
+    this.destroyRef.onDestroy(() => subscription.unsubscribe())
+  }
+
   ngOnInit(): void {
     this.loadChart()
+    this.getYears()
 
     this.yearSelector.controls.year.valueChanges.subscribe((year:any) => {
       this.currentYear = year

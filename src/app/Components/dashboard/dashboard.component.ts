@@ -126,19 +126,19 @@ export class DashboardComponent implements OnInit {
         })
     }
 
-    // ADD FORM
-
-    openAddDialog() {
-        const dialog = document.getElementById("addExpenseDialog") as HTMLElement
-
-        dialog.style.visibility = "unset"
+    showAddExpenseDialog = false;
+    isAddExpenseDialogShown() {
+        this.showAddExpenseDialog = !this.showAddExpenseDialog
     }
 
-    hideAddDialog() {
-        const dialog = document.getElementById("addExpenseDialog") as HTMLElement
+    showSalaryDialog = false;
+    isSalaryDialogShown() {
+        this.showSalaryDialog = !this.showSalaryDialog
+    }
 
-        dialog.style.visibility = "hidden"
-        this.submitErr = false;
+    editExpenseDialog = false;
+    isEditExpenseDialogShown() {
+        this.editExpenseDialog = !this.editExpenseDialog
     }
 
 
@@ -167,7 +167,7 @@ export class DashboardComponent implements OnInit {
             next: (res) => {
                 this.addExpenseForm.reset()
                 this.loadExpenses()
-                this.hideAddDialog()
+                this.isAddExpenseDialogShown()
                 this.submitErr = false;
             },
             error: (err) => {
@@ -188,7 +188,6 @@ export class DashboardComponent implements OnInit {
     })
 
     openEditDialog(expenseId: number) {
-        const dialog = document.getElementById("editExpenseDialog") as HTMLElement
         let currentExpense: any;
 
         const subscription = this.expensesService.getExpenseById(expenseId, localStorage.getItem("userId")!).subscribe({
@@ -205,15 +204,7 @@ export class DashboardComponent implements OnInit {
             }
         })
 
-        this.destroyRef.onDestroy(() => subscription.unsubscribe())
-        dialog.style.visibility = "unset"
-    }
-
-    hideEditDialog() {
-        const dialog = document.getElementById("editExpenseDialog") as HTMLElement
-
-        dialog.style.visibility = "hidden"
-        this.submitErr = false;
+        this.editExpenseDialog = !this.editExpenseDialog
     }
 
     onEditExpense() {
@@ -232,7 +223,7 @@ export class DashboardComponent implements OnInit {
             next: (res) => {
                 this.editExpenseForm.reset()
                 this.loadExpenses()
-                this.hideEditDialog()
+                this.isEditExpenseDialogShown()
                 this.submitErr = false;
             },
             error: (err) => {
@@ -250,23 +241,9 @@ export class DashboardComponent implements OnInit {
         }).subscribe({
             next: (res) => {
                 this.loadExpenses()
-                this.hideEditDialog()
+                this.isEditExpenseDialogShown()
             }
         })
-    }
-
-    // SALARY FORM
-    openSalaryAddDialog() {
-        const dialog = document.getElementById("editSalaryDialog") as HTMLElement
-
-        dialog.style.visibility = "unset"
-    }
-
-    hideSalaryDialog() {
-        const dialog = document.getElementById("editSalaryDialog") as HTMLElement
-
-        dialog.style.visibility = "hidden"
-        this.submitErr = false;
     }
 
     editSalaryForm = new FormGroup({
@@ -297,7 +274,7 @@ export class DashboardComponent implements OnInit {
                 this.editSalaryForm.reset()
                 this.getSalary(this.month)
                 this.loadExpenses()
-                this.hideSalaryDialog()
+                this.isSalaryDialogShown()
                 this.submitErr = false;
             }
         })
@@ -305,7 +282,6 @@ export class DashboardComponent implements OnInit {
     }
 
     openSalaryEditDialog() {
-        const dialog = document.getElementById("editSalaryDialog") as HTMLElement
         let currentSalary: any;
 
         const subscription = this.salaryService.getSalary(this.month, this.currentYear, localStorage.getItem("userId")!).subscribe({
@@ -323,7 +299,7 @@ export class DashboardComponent implements OnInit {
         })
 
         this.destroyRef.onDestroy(() => subscription.unsubscribe())
-        dialog.style.visibility = "unset"
+        this.isSalaryDialogShown()
     }
 
     onEditSalary() {
@@ -339,10 +315,11 @@ export class DashboardComponent implements OnInit {
             userId: localStorage.getItem("userId")
         }).subscribe({
             next: (res) => {
+                console.log(res)
                 this.editSalaryForm.reset()
                 this.getSalary(this.month)
                 this.loadExpenses()
-                this.hideSalaryDialog()
+                this.isSalaryDialogShown()
                 this.submitErr = false;
             },
             error: (err) => {

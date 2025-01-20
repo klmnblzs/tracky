@@ -1,43 +1,47 @@
-<dialog id="addCategoryDialog">
-    <div class="panel">
-      <div id="title-container">
-        <h2>Új kategória rögzítése</h2>
+@if(addCategoryDialog) {
+  <dialog id="addCategoryDialog">
+      <div class="panel">
+        <div id="title-container">
+          <h2>Új kategória rögzítése</h2>
+        </div>
+        <div id="formContainer">
+          <form [formGroup]="addCategoryForm" (ngSubmit)="onSubmitAdd()">
+            <label for="category">Kategória neve <span class="required">*</span></label>
+            <input type="text" id="category" name="category" formControlName="category" [class.invalid]="this.addCategoryForm.controls.category.invalid && this.addCategoryForm.controls.category.touched">
+          </form>
+        </div>
+        <div>
+          <button (click)="isAddCategoryDialogShown()" id="nvmBtn">Mégse</button>
+          <button (click)="onSubmitAdd()" id="addBtn">Rögzítés</button>
+        </div>
       </div>
-      <div id="formContainer">
-        <form [formGroup]="addCategoryForm" (ngSubmit)="onSubmitAdd()">
-          <label for="category">Kategória neve <span class="required">*</span></label>
-          <input type="text" id="category" name="category" formControlName="category" [class.invalid]="this.addCategoryForm.controls.category.invalid && this.addCategoryForm.controls.category.touched">
-        </form>
-      </div>
-      <div>
-        <button (click)="hideAddCategoryDialog()" id="nvmBtn">Mégse</button>
-        <button (click)="onSubmitAdd()" id="addBtn">Rögzítés</button>
-      </div>
-    </div>
-</dialog>
+  </dialog>
+}
 
-<dialog id="removeCategoryDialog">
-    <div class="panel">
-      <div id="title-container">
-        <h2>Új kategória rögzítése</h2>
+@if(deleteCategoryDialog) {
+  <dialog id="removeCategoryDialog">
+      <div class="panel">
+        <div id="title-container">
+          <h2>Új kategória rögzítése</h2>
+        </div>
+        <div id="formContainer">
+          <form [formGroup]="deleteCategoryForm" (ngSubmit)="onSubmitDelete()">
+              <label for="category">Kategória <span class="required">*</span></label>
+              <select name="category" id="category" formControlName="category">
+                <option value="" disabled>Válassz kategóriát...</option>
+                @for (category of categories; track category.id) {
+                    <option [value]="category.category_name">{{ category.category_name }}</option>
+                }
+              </select>
+          </form>
+        </div>
+        <div>
+          <button (click)="isDeleteCategoryDialogShown()" id="nvmBtn">Mégse</button>
+          <button (click)="onSubmitDelete()" id="deleteBtn">Törlés</button>
+        </div>
       </div>
-      <div id="formContainer">
-        <form [formGroup]="deleteCategoryForm" (ngSubmit)="onSubmitDelete()">
-            <label for="category">Kategória <span class="required">*</span></label>
-            <select name="category" id="category" formControlName="category">
-              <option value="" disabled>Válassz kategóriát...</option>
-              @for (category of categories; track category.id) {
-                  <option [value]="category.category_name">{{ category.category_name }}</option>
-              }
-            </select>
-        </form>
-      </div>
-      <div>
-        <button (click)="hideDeleteCategoryDialog()" id="nvmBtn">Mégse</button>
-        <button (click)="onSubmitDelete()" id="deleteBtn">Törlés</button>
-      </div>
-    </div>
-</dialog>
+  </dialog>
+}
 
 <div class="container">
     <div class="category-container">
@@ -50,8 +54,8 @@
             </ul>
         </div>
         <div>
-            <button id="addBtn" (click)="openAddCategoryDialog()">Új kategória</button>
-            <button id="deleteBtn" (click)="openDeleteCategoryDialog()">Kategória törlés</button>
+            <button id="addBtn" (click)="isAddCategoryDialogShown()">Új kategória</button>
+            <button id="deleteBtn" (click)="isDeleteCategoryDialogShown()">Kategória törlés</button>
         </div>
     </div>
 </div>

@@ -1,80 +1,85 @@
 <app-navbar />
 
-<dialog id="addExpenseDialog">
-  <div class="panel">
-    <div id="title-container">
-      <h2>Új adat rögzítése</h2>
-      <p>{{ formatMonth(this.month) }}</p>
-    </div>
-    <div id="formContainer">
-      <form [formGroup]="addExpenseForm" (ngSubmit)="onAddExpense()">
-        <label for="category">Kategória <span class="required">*</span></label>
-        <select name="category" id="category" formControlName="category">
-          <option value="" disabled>Válassz kategóriát...</option>
-          @for (category of categories; track $index) {
-            <option [value]="category.category_name">{{ category.category_name }}</option>
+@if(showAddExpenseDialog) {
+  <dialog id="addExpenseDialog">
+    <div class="panel">
+      <div id="title-container">
+        <h2>Új adat rögzítése</h2>
+        <p>{{ formatMonth(this.month) }}</p>
+      </div>
+      <div id="formContainer">
+        <form [formGroup]="addExpenseForm" (ngSubmit)="onAddExpense()">
+          <label for="category">Kategória <span class="required">*</span></label>
+          <select name="category" id="category" formControlName="category">
+            <option value="" disabled>Válassz kategóriát...</option>
+            @for (category of categories; track $index) {
+              <option [value]="category.category_name">{{ category.category_name }}</option>
+            }
+          </select>
+          <label for="amount">Összeg <span class="required">*</span></label>
+          <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.addExpenseForm.controls.amount.invalid && this.addExpenseForm.controls.amount.touched">
+          <label for="description">Mire? <span class="required">*</span></label>
+          <input type="text" id="description" name="description" formControlName="description" [class.invalid]="this.addExpenseForm.controls.description.invalid && this.addExpenseForm.controls.description.touched">
+          
+          @if(this.submitErr == true) {
+            <p class="error">Hiba a hozzáadás közben!<br>Töltsd ki helyesen!</p>
           }
-        </select>
-        <label for="amount">Összeg <span class="required">*</span></label>
-        <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.addExpenseForm.controls.amount.invalid && this.addExpenseForm.controls.amount.touched">
-        <label for="description">Mire? <span class="required">*</span></label>
-        <input type="text" id="description" name="description" formControlName="description" [class.invalid]="this.addExpenseForm.controls.description.invalid && this.addExpenseForm.controls.description.touched">
-        
-        @if(this.submitErr == true) {
-          <p class="error">Hiba a hozzáadás közben!<br>Töltsd ki helyesen!</p>
-        }
+  
+          <div>
+            <button (click)="isAddExpenseDialogShown()" id="nvmBtn">Mégse</button>
+            <button type="submit" id="addBtn">Rögzítés</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </dialog>
+}
 
+@if(editExpenseDialog) {
+  <dialog id="editExpenseDialog">
+    <div class="panel">
+      <div id="title-container">
+        <h2>Adat szerkesztése</h2>
+        <p>{{ formatMonth(this.month) }}</p>
+      </div>
+      <div id="formContainer">
+        <form [formGroup]="editExpenseForm" (ngSubmit)="onEditExpense()">
+          <label for="category">Kategória <span class="required">*</span></label>
+          <select name="category" id="category" formControlName="category">
+            <option value="" disabled>Válassz kategóriát...</option>
+            @for (category of categories; track $index) {
+              <option [value]="category.category_name">{{ category.category_name }}</option>
+            }
+          </select>
+          <label for="amount">Összeg <span class="required">*</span></label>
+          <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.editExpenseForm.controls.amount.invalid && this.editExpenseForm.controls.amount.touched">
+          <label for="description">Mire? <span class="required">*</span></label>
+          <input type="text" id="description" name="description" formControlName="description" [class.invalid]="this.editExpenseForm.controls.description.invalid && this.editExpenseForm.controls.description.touched">
+        </form>
+      </div>
+      <div>
+        <button (click)="deleteExpense()" id="deleteBtn">Törlés</button>
+        <button (click)="onEditExpense()" type="submit" id="editBtn">Szerkesztés</button>
+      </div>
+      <div>
+        <button (click)="isEditExpenseDialogShown()" id="nvmBtn">Mégse</button>
+      </div>
+    </div>
+  </dialog>
+}
+
+@if(showSalaryDialog) {
+  <dialog id="editSalaryDialog">
+    <div class="panel">
+      <div id="title-container">
+        <h2>{{ formatMonth(this.month) }}i fizetés: <span class="required">*</span></h2>
+      </div>
+      <div id="formContainer">
+        <form [formGroup]="editSalaryForm" (ngSubmit)="this.salary === null ? onAddSalary() : onEditSalary()" >
+          <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.editSalaryForm.controls.amount.invalid && this.editSalaryForm.controls.amount.touched">
+        </form>
         <div>
-          <button (click)="hideAddDialog()" id="nvmBtn">Mégse</button>
-          <button type="submit" id="addBtn">Rögzítés</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</dialog>
-
-<dialog id="editExpenseDialog">
-  <div class="panel">
-    <div id="title-container">
-      <h2>Adat szerkesztése</h2>
-      <p>{{ formatMonth(this.month) }}</p>
-    </div>
-    <div id="formContainer">
-      <form [formGroup]="editExpenseForm" >
-        <label for="category">Kategória <span class="required">*</span></label>
-        <select name="category" id="category" formControlName="category">
-          <option value="" disabled>Válassz kategóriát...</option>
-          @for (category of categories; track $index) {
-            <option [value]="category.category_name">{{ category.category_name }}</option>
-          }
-        </select>
-        <label for="amount">Összeg <span class="required">*</span></label>
-        <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.editExpenseForm.controls.amount.invalid && this.editExpenseForm.controls.amount.touched">
-        <label for="description">Mire? <span class="required">*</span></label>
-        <input type="text" id="description" name="description" formControlName="description" [class.invalid]="this.editExpenseForm.controls.description.invalid && this.editExpenseForm.controls.description.touched">
-      </form>
-    </div>
-    <div>
-      <button (click)="deleteExpense()" id="deleteBtn">Törlés</button>
-      <button (click)="onEditExpense()" id="editBtn">Szerkesztés</button>
-    </div>
-    <div>
-      <button (click)="hideEditDialog()" id="nvmBtn">Mégse</button>
-    </div>
-  </div>
-</dialog>
-
-<dialog id="editSalaryDialog">
-  <div class="panel">
-    <div id="title-container">
-      <h2>{{ formatMonth(this.month) }}i fizetés: <span class="required">*</span></h2>
-    </div>
-    <div id="formContainer">
-      <form [formGroup]="editSalaryForm" >
-        <input type="number" id="amount" name="amount" formControlName="amount" min="0" [class.invalid]="this.editSalaryForm.controls.amount.invalid && this.editSalaryForm.controls.amount.touched">
-        
-        <div>
-          <button (click)="hideSalaryDialog()" id="nvmBtn">Mégse</button>
+          <button (click)="isSalaryDialogShown()" id="nvmBtn">Mégse</button>
           
           @if(this.salary === null) {
             <button (click)="onAddSalary()" id="addBtn" style="margin-left:10px;">Rögzítés</button>
@@ -82,10 +87,10 @@
             <button (click)="onEditSalary()" id="editBtn" style="margin-left:10px;">Szerkesztés</button>
           }
         </div>
-      </form>
+      </div>
     </div>
-  </div>
-</dialog>
+  </dialog>
+}
 
 <div class="container">
   <div class="title">
@@ -93,9 +98,9 @@
       @if(formatMonth(this.month) !== "undefined") {
         <div id="navigation-container">
           <h1>{{this.currentYear}}, {{ formatMonth(this.month) }}</h1>
-          <button (click)="openAddDialog()" id="addBtn">Új hozzáadása</button>
+          <button (click)="isAddExpenseDialogShown()" id="addBtn">Új hozzáadása</button>
           @if(this.salary === null) {
-            <button (click)="openSalaryAddDialog()" id="editBtn" style="margin-left:10px;">Fizetés rögzítése</button>
+            <button (click)="openSalaryEditDialog()" id="editBtn" style="margin-left:10px;">Fizetés rögzítése</button>
           } @else {
             <button (click)="openSalaryEditDialog()" id="editBtn" style="margin-left:10px;">Fizetés szerkesztése</button>
           }
