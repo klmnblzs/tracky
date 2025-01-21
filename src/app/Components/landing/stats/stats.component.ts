@@ -59,9 +59,17 @@ export class StatsComponent implements OnInit {
     this.deleteChart()
   }
 
+  errMessage:string = "";
   loadChart() {
     this.expensesService.getExpenseStat(this.userId, this.currentYear).subscribe({
       next: (res:any) => {
+        if(res.length === 0) {
+          this.errMessage="Nincs elérhető statisztika"
+          return
+        }
+
+        this.errMessage=""
+
         const labels = res.map( (item:any) => item.category );
         const values = res.map( (item:any) => item.total );
 
@@ -71,7 +79,7 @@ export class StatsComponent implements OnInit {
             labels: labels,
             datasets: [
               {
-                label: 'Költések',
+                label: 'HUF',
                 data: values,
                 hoverOffset: 4,
                 borderWidth: 0,

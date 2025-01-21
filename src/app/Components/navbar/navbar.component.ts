@@ -84,7 +84,6 @@ export class NavbarComponent implements OnInit {
     
     this.yearSelector.controls.year.valueChanges.subscribe((year:any) => {
       if(year === "new") {
-        console.log("yessir")
         let select = document.getElementById("yearSelector") as HTMLSelectElement
         select.selectedIndex = 0;
         

@@ -20,9 +20,20 @@ $btn-nvm: #8a8a8a;
         margin-bottom: 25px;
     }
 
+    #warning {
+        color: #868686;
+        font-style: italic;
+        font-size: 17px;
+        width: 100%;
+    }
+
     canvas {
         margin: auto;
         display: block;
         color: white;
+
+        &.hidden {
+            display: none;
+        }
     }
 }

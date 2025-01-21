@@ -12,5 +12,8 @@
             }
         </select>
     </form>
-    <canvas id="pieChart"></canvas>
+    @if(errMessage !== "") {
+        <p id="warning">{{errMessage}}</p>
+    }
+    <canvas id="pieChart" [class.hidden]='errMessage !== ""'></canvas>
 </div>
